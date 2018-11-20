@@ -1,4 +1,4 @@
-package test;
+package com.gysoft.jdbc.test.bean;
 
 import lombok.Data;
 
