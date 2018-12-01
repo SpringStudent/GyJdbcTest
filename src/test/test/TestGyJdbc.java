@@ -66,10 +66,9 @@ public class TestGyJdbc {
     public void testSql() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
-        Integer count = new Criteria().useSql(Integer.class,"select count(*) from tb_user",tbUserDao).queryForObject();
-        List<Map<String,Object>> mapList = new Criteria().useSql("select name,email from tb_user",tbUserDao).queryForMaps();
-        PageResult<TbUser> tbUserPageResult = new Criteria().useSql(TbUser.class,"select * from tb_user",tbUserDao).pageQuery(new Page(1,1));
-        PageResult<TbUser> tbUserPageResult12 = tbUserDao.pageQuery(new Page(1,1));
+        Integer count = new Criteria().useSql(Integer.class,"select count(*) from tb_user",tbUserDao).queryObject();
+        List<Map<String,Object>> mapList = new Criteria().useSql("select name,email from tb_user",tbUserDao).queryMaps();
+        PageResult<SimpleUser> tbUserPageResult = new Criteria().useSql(SimpleUser.class,"select name,email,birth from tb_user",tbUserDao).pageQuery(new Page(1,1));
         System.out.println(count);
         System.out.print(mapList);
     }
