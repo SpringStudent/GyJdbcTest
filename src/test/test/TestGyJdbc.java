@@ -70,7 +70,7 @@ public class TestGyJdbc {
         List<Map<String,Object>> mapList = tbUserDao.useSql("select name,email from tb_user").queryMaps();
         PageResult<SimpleUser> tbUserPageResult = tbUserDao
                 .useSql(SimpleUser.class,"select name,email,birth from tb_user where name = ?","zhouning").pageQuery(new Page(1,1));
-        List<SimpleUser> simpleUsers = tbUserDao.useSql(SimpleUser.class,"select name,email,birth from tb_user where name like ?","%zhou%").queryAll();
+        List<SimpleUser> simpleUsers = tbUserDao.useSql(SimpleUser.class,"select name,email,birth from tb_user where name like ?","%zhou%").queryList();
         System.out.println(count);
         System.out.println(mapList);
         System.out.println(tbUserPageResult);
