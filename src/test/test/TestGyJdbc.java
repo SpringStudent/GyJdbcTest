@@ -1,21 +1,18 @@
 package test;
 
-import com.gysoft.jdbc.bean.Criteria;
-import com.gysoft.jdbc.bean.Page;
-import com.gysoft.jdbc.bean.PageResult;
+import com.gysoft.jdbc.bean.*;
 import com.gysoft.jdbc.test.bean.SimpleUser;
+import com.gysoft.jdbc.test.bean.param.QueryUserParam;
 import com.gysoft.jdbc.test.dao.TbUserDao;
 import com.gysoft.jdbc.test.pojo.TbUser;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,9 +68,26 @@ public class TestGyJdbc {
         PageResult<SimpleUser> tbUserPageResult = tbUserDao
                 .useSql(SimpleUser.class,"select name,email,birth from tb_user where name = ?","zhouning").pageQuery(new Page(1,1));
         List<SimpleUser> simpleUsers = tbUserDao.useSql(SimpleUser.class,"select name,email,birth from tb_user where name like ?","%zhou%").queryList();
+        QueryUserParam queryUserParam = QueryUserParam.builder().searchKey("z").birth(new Date()).build();
+
+        List<SimpleUser> simpleUsers2 = tbUserDao.useSql(SimpleUser.class, () -> {
+            Map<String,Object> paramMap = new HashMap<>();
+            StringBuilder sql = new StringBuilder();
+            sql.append("select name,email,birth from tb_user where 1 = 1 ");
+            if(!StringUtils.isEmpty(queryUserParam.getSearchKey())){
+                sql.append("and name like :name ");
+                paramMap.put("name","%"+queryUserParam.getSearchKey()+"%");
+            }
+            if(queryUserParam.getBirth()!=null){
+                sql.append("and birth < :birth");
+                paramMap.put("birth",queryUserParam.getBirth());
+            }
+            return SqlParamMap.builder().sql(sql.toString()).paramMap(paramMap).build();
+        }).queryList();
         System.out.println(count);
         System.out.println(mapList);
         System.out.println(tbUserPageResult);
-        System.out.print(simpleUsers);
+        System.out.println(simpleUsers);
+        System.out.println(simpleUsers2);
     }
 }
