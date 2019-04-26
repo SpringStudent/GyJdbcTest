@@ -13,7 +13,10 @@ public class SimpleUser {
 
     private String name;
 
+    private String realName;
+
     private String email;
 
-    private Date birth;
+    private String mobile;
+
 }

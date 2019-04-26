@@ -8,5 +8,5 @@ import com.gysoft.jdbc.test.pojo.TbUser;
  * @Date 2018-09-21 15:13
  */
 
-public interface TbUserDao extends EntityDao<TbUser,Integer> {
+public interface TbUserDao extends EntityDao<TbUser,String> {
 }

@@ -28,8 +28,3 @@ CREATE TABLE `tb_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
--- ----------------------------
--- Records of tb_user
--- ----------------------------
-INSERT INTO `tb_user` VALUES ('1', 'zhouning', '111111', '2267431887@qq.com', '2018-09-21 16:01:15');
-INSERT INTO `tb_user` VALUES ('2', 'cyl', '111111', '111@qq.com', '2018-09-21 16:01:59');
