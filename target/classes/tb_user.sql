@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : 测试内网
-Source Server Version : 50721
-Source Host           : 192.168.1.231:3306
-Source Database       : dcp_test
+Source Server         : 本地数据库
+Source Server Version : 50722
+Source Host           : localhost:3306
+Source Database       : test
 
 Target Server Type    : MYSQL
-Target Server Version : 50721
+Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2018-09-30 17:23:18
+Date: 2019-04-26 16:27:01
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -20,11 +20,20 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `tb_user`;
 CREATE TABLE `tb_user` (
-  `id` varchar(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `pwd` varchar(32) NOT NULL,
-  `email` varchar(20) NOT NULL,
-  `birth` datetime NOT NULL,
+  `id` varchar(32) CHARACTER SET utf8 NOT NULL,
+  `name` varchar(50) CHARACTER SET utf8 NOT NULL,
+  `realName` varchar(50) CHARACTER SET utf8 NOT NULL COMMENT '真实名称',
+  `pwd` varchar(32) CHARACTER SET utf8 NOT NULL,
+  `email` varchar(20) CHARACTER SET utf8 NOT NULL,
+  `mobile` varchar(11) CHARACTER SET utf8 NOT NULL COMMENT '手机号码',
+  `age` int(11) NOT NULL COMMENT '年龄',
+  `birth` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '生日',
+  `roleId` int(11) NOT NULL COMMENT '角色Id',
+  `career` varchar(255) CHARACTER SET utf8 NOT NULL COMMENT '职业',
+  `isActive` tinyint(4) NOT NULL COMMENT '是否激活0.未激活,1.已激活',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+-- ----------------------------
+-- Records of tb_user
+-- ----------------------------

@@ -1,5 +1,6 @@
 package test;
 
+import com.gysoft.emqtt.service.GyMqttClientPoolPublisher;
 import com.gysoft.jdbc.bean.*;
 import com.gysoft.jdbc.test.bean.SimpleUser;
 import com.gysoft.jdbc.test.bean.UserRole;
@@ -122,7 +123,7 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         //根据用户名查询:SELECT * FROM tb_user where name = 'zhouning'
-        TbUser tbUser = tbUserDao.queryOne(new Criteria().where(TbUser::getName, "zhouning"));
+        TbUser tbUser = tbUserDao.queryOne(new Criteria().where(TbUser::getName, "zhouning").andIfAbsent(TbUser::getName,null));
         System.out.println("queryOne:" + tbUser);
         //根据用户名批量查询:SELECT * FROM tb_user where name in('zhouning','yinhw');
         List<TbUser> tbUsers = tbUserDao.queryWithCriteria(new Criteria().in(TbUser::getName, Arrays.asList("zhouning", "yinhw")));
@@ -202,7 +203,7 @@ public class TestGyJdbc {
         //以下SQL仅仅用来演示SQL功能，工作中切勿这么些
         //SELECT roleId FROM( SELECT DISTINCT(t.roleId) AS roleId FROM tb_user AS t UNION ALL SELECT DISTINCT(t1.roleId) AS roleId FROM tb_user AS t1)  AS t2
         SQL sql7 = new SQL().select("roleId").from(new SQL().select(distinctAs("t.roleId").as("roleId")).from(TbUser.class).as("t")
-                                                  ,new SQL().select(distinctAs("t1.roleId").as("roleId")).from(TbUser.class).as("t1")).as("t2");
+                ,new SQL().select(distinctAs("t1.roleId").as("roleId")).from(TbUser.class).as("t1")).as("t2");
         List<Integer> inUseRoleId = tbUserDao.queryWithSql(Integer.class,sql7).queryForList();
         System.out.println("queryWithSql:"+inUseRoleId);
         //SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user AS t1 LEFT JOIN tb_role AS t2  ON t1.roleId = t2.id  WHERE t1.age > 24

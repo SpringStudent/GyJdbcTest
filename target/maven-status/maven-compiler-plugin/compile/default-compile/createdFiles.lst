@@ -1,7 +1,0 @@
-com\gysoft\jdbc\test\bean\param\QueryUserParam$QueryUserParamBuilder.class
-com\gysoft\jdbc\test\App.class
-com\gysoft\jdbc\test\bean\param\QueryUserParam.class
-com\gysoft\jdbc\test\dao\TbUserDao.class
-com\gysoft\jdbc\test\pojo\TbUser.class
-com\gysoft\jdbc\test\bean\SimpleUser.class
-com\gysoft\jdbc\test\dao\TbUserDaoImpl.class

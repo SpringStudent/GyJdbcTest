@@ -107,9 +107,9 @@
             <version>1.9.3</version>
         </dependency>
         <dependency>
-            <groupId>io.github.biezhi</groupId>
-            <artifactId>anima</artifactId>
-            <version>0.2.5</version>
+            <groupId>com.gysoft.emqtt</groupId>
+            <artifactId>EmqttUtils</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
