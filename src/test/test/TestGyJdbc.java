@@ -232,12 +232,17 @@ public class TestGyJdbc {
 
         SQL sql3 = new SQL().insertInto(TbAccount.class, TbAccount::getUserName, TbAccount::getRealName)
                 .select("name", "realName").from(TbUser.class);
+
+        SQL sql4 = new SQL().insertInto(TbUser.class, TbUser::getId,TbUser::getName, TbUser::getRealName, TbUser::getPwd, TbUser::getEmail, TbUser::getMobile, TbUser::getAge, TbUser::getBirth, TbUser::getRoleId,TbUser::getCareer, TbUser::getIsActive)
+                .values(4, "ins4", "插入4", "123456", "678@qq.com", "12345678901", 28, new Date(), 1, "测试", 0);
+
         tbUserDao.insertWithSql(sql);
         tbUserDao.insertWithSql(sql2);
         tbUserDao.insertWithSql(sql3);
+        tbUserDao.insertWithSql(sql4);
     }
 
-    @After
+//    @After
     public void testDelete() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
