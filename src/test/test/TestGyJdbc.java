@@ -266,9 +266,9 @@ public class TestGyJdbc {
                 .index().unique().name("ix_userName").column("userName").commit()
                 .index().name("ix_userName_realName").column("userName").column("realName").commit()
                 .engine(TableEngine.InnoDB).comment("账号表2").commit()
-                .values(0,"zhouning","周宁")
-                .values(0,"pengjiajia","彭佳佳");
-//                .select("*").from(TbAccount.class);支持select语句的插入方法
+//                .values(0,"zhouning","周宁");
+//                .values(0,"pengjiajia","彭佳佳");
+//                .select("*").from(TbAccount.class).limit(1);//支持select语句的插入方法
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         tbAccountDao.createWithSql(sql);
