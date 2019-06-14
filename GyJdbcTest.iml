@@ -75,5 +75,32 @@
     <orderEntry type="library" name="Maven: com.gysoft.emqtt:EmqttUtils:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.32" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework.web:hsweb-datasource-api:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework.web:hsweb-core:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.javassist:javassist:3.21.0-GA" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework:hsweb-utils:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: joda-time:joda-time:2.7" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:5.3.6.Final" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.3.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml:classmate:1.3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework.web:hsweb-commons-utils:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:1.5.19.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:1.5.19.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:1.5.19.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-logging:1.5.19.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.11" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.11" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:jul-to-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:log4j-over-slf4j:1.7.25" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.yaml:snakeyaml:1.17" level="project" />
+    <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.8.13" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework.web:hsweb-boost-aop:3.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework:hsweb-easy-orm-rdb:3.0.5" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework:hsweb-easy-orm-core:3.0.5" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework:hsweb-expands-script:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.hswebframework:hsweb-expands-security:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
   </component>
 </module>

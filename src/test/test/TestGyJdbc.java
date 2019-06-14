@@ -9,8 +9,6 @@ import com.gysoft.jdbc.test.pojo.TbAccount;
 import com.gysoft.jdbc.test.pojo.TbRole;
 import com.gysoft.jdbc.test.pojo.TbUser;
 import com.gysoft.jdbc.tools.CustomResultSetExractorFactory;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,7 +28,7 @@ import static com.gysoft.jdbc.bean.FuncBuilder.*;
 
 public class TestGyJdbc {
 
-//    @Before
+    @Test
     public void testInsert() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
@@ -226,25 +224,21 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().insert("id", "name", "realName", "pwd", "email", "mobile", "age", "birth", "roleId", "career", "isActive")
-                .values(1, "ins1", "插入1", "123456", "345@qq.com", "12345678901", 25, new Date(), 1, "测试", 1)
-                .values(2, "ins2", "插入2", "123456", "456@qq.com", "12345678901", 26, new Date(), 1, "测试", 1)
-                .values(3, "ins3", "插入3", "123456", "567@qq.com", "12345678901", 27, new Date(), 1, "测试", 0);
+                .values(4, "ins4", "插入1", "123456", "345@qq.com", "12345678901", 25, new Date(), 1, "测试", 1)
+                .values(5, "ins5", "插入2", "123456", "456@qq.com", "12345678901", 26, new Date(), 1, "测试", 1)
+                .values(6, "ins6", "插入3", "123456", "567@qq.com", "12345678901", 27, new Date(), 1, "测试", 0);
         SQL sql2 = new SQL().insert("userName", "realName")
                 .select("name", "realName").from(TbUser.class);
 
         SQL sql3 = new SQL().insert(TbAccount::getUserName, TbAccount::getRealName)
-                .select("name", "realName").from(TbUser.class).gt(TbUser::getIsActive,0);
-
-        SQL sql4 = new SQL().insert(TbUser::getId,TbUser::getName, TbUser::getRealName, TbUser::getPwd, TbUser::getEmail, TbUser::getMobile, TbUser::getAge, TbUser::getBirth, TbUser::getRoleId,TbUser::getCareer, TbUser::getIsActive)
-                .values(4, "ins4", "插入4", "123456", "678@qq.com", "12345678901", 28, new Date(), 1, "测试", 0);
+                .select("name", "realName").from(TbUser.class).gt(TbUser::getIsActive, 0);
 
         tbUserDao.insertWithSql(sql);
         tbAccountDao.insertWithSql(sql2);
         tbAccountDao.insertWithSql(sql3);
-        tbUserDao.insertWithSql(sql4);
     }
 
-//    @After
+    @Test
     public void testDelete() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
@@ -261,6 +255,21 @@ public class TestGyJdbc {
 
     private static String genId() {
         return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    @Test
+    public void testCreate() throws Exception {
+        SQL sql = new SQL().createTable().temporary().name("tb_account2")
+                .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
+                .addColumn().name("userName").varchar(50).notNull().comment("账号").commit()
+                .addColumn().name("realName").varchar(50).notNull().comment("真实名称").commit()
+                .engine(TableEngine.InnoDB).comment("账号表2").commit()
+                .values(0,"zhouning","周宁")
+                .values(0,"pengjiajia","彭佳佳");
+//                .select("*").from(TbAccount.class);支持select语句的插入方法
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        tbAccountDao.createWithSql(sql);
     }
 
 }

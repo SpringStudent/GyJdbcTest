@@ -85,4 +85,5 @@
 
     <bean id="tbUserDao" class="com.gysoft.jdbc.test.dao.TbUserDaoImpl"/>
     <bean id="tbAccountDao" class="com.gysoft.jdbc.test.dao.TbAccountDaoImpl"/>
+    <bean id="tbArrDao" class="com.gysoft.jdbc.test.dao.TbArrDaoImpl"/>
 </beans>
