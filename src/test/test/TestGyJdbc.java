@@ -205,9 +205,9 @@ public class TestGyJdbc {
                 , new SQL().select(distinctAs("t1.roleId").as("roleId")).from(TbUser.class).as("t1")).as("t2");
         List<Integer> inUseRoleId = tbUserDao.queryWithSql(Integer.class, sql7).queryForList();
         System.out.println("queryWithSql:" + inUseRoleId);
-        //SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user AS t1 LEFT JOIN tb_role AS t2  ON t1.roleId = t2.id  WHERE t1.age > 24
+        //(SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user AS t1 LEFT JOIN tb_role AS t2  ON t1.roleId = t2.id  WHERE t1.age > 24)
         // UNION
-        // SELECT t3.name,t3.realName,t4.id,t4.roleName FROM tb_user AS t3 LEFT JOIN tb_role AS t4  ON t3.roleId = t4.id  WHERE t3.career IN('JAVA')
+        // (SELECT t3.name,t3.realName,t4.id,t4.roleName FROM tb_user AS t3 LEFT JOIN tb_role AS t4  ON t3.roleId = t4.id  WHERE t3.career IN('JAVA'))
         SQL sql8 = new SQL().select("t1.name,t1.realName,t2.id,t2.roleName").from(TbUser.class)
                 .as("t1").leftJoin(new Joins().with(TbRole.class).as("t2").on("t1.roleId", "t2.id"))
                 .where("t1.age", ">", 24).union().select("t3.name,t3.realName,t4.id,t4.roleName").from(TbUser.class)
@@ -244,7 +244,7 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         tbUserDao.delete("0");
         tbUserDao.batchDelete(tbUserDao.queryAll().stream().map(TbUser::getId).collect(Collectors.toList()));
-
+        tbUserDao.deleteWithCriteria(new Criteria().where(TbUser::getIsActive,0));
     }
 
     private static Date LocalDateToDate(LocalDate localDate) {
