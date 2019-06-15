@@ -259,19 +259,38 @@ public class TestGyJdbc {
 
     @Test
     public void testCreate() throws Exception {
-        SQL sql = new SQL().createTable().name("tb_account2")
+        SQL sql = new SQL().createTable()
                 .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .addColumn().name("userName").varchar(50).notNull().comment("账号").commit()
-                .addColumn().name("realName").varchar(50).notNull().comment("真实名称").commit()
-                .index().unique().name("ix_userName").column("userName").commit()
-                .index().name("ix_userName_realName").column("userName").column("realName").commit()
-                .engine(TableEngine.InnoDB).comment("账号表2").commit()
+                .addColumn().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
+                .engine(TableEngine.MyISAM).comment("账号表2").commit()
 //                .values(0,"zhouning","周宁");
 //                .values(0,"pengjiajia","彭佳佳");
-//                .select("*").from(TbAccount.class).limit(1);//支持select语句的插入方法
+                .select("0,userName,realName").from(TbAccount.class);//支持select语句的插入方法
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        tbAccountDao.createWithSql(sql);
+        String tbName = tbAccountDao.createWithSql(sql);
+        //通过临时表进行inner join left join 等骚操作
+        SQL qSql = new SQL().select("*").from(tbName);
+        System.out.println(tbAccountDao.queryWithSql(TbAccount.class, qSql).queryList());
+    }
+
+    @Test
+    public void testUseTmpTableQuery() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        SQL sql = new SQL().select("*").from(TbAccount.class).as("a")
+                .innerJoin(new Joins().with(tbAccountDao.createWithSql(
+                        new SQL().createTable().temporary()
+                                .addColumn().name("id").integer().primary().notNull().autoIncrement().commit()
+                                .addColumn().name("userName").varchar(50).notNull().commit()
+                                .index().name("ix_userName").column("userName").commit()
+                                .engine(TableEngine.MyISAM).comment("用户临时表").commit()
+                                .select("0", "name").from(TbUser.class)
+                )).as("b").on("a.userName", "b.userName"));
+        List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class,sql).queryList();
+        System.out.println(result);
+        System.out.println(result.size());
     }
 
 }
