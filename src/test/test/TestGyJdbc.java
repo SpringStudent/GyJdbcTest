@@ -294,4 +294,15 @@ public class TestGyJdbc {
         System.out.println(result.size());
     }
 
+    @Test
+    public void testBatchInsert() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        SQL sql = new SQL().insert("userName","realName");
+        for(int i = 0;i<100000;i++){
+            sql.values("user"+i,"周"+i);
+        }
+        System.out.println(tbAccountDao.insertWithSql(sql));
+    }
+
 }
