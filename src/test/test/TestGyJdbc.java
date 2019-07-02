@@ -281,12 +281,13 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().select("*").from(TbAccount.class).as("a")
                 .innerJoin(new Joins().with(tbAccountDao.createWithSql(
-                        new SQL().createTable().temporary()
+                        new SQL().createTable()
                                 .addColumn().name("id").integer().primary().notNull().autoIncrement().commit()
                                 .addColumn().name("userName").varchar(50).notNull().commit()
                                 .index().name("ix_userName").column("userName").commit()
                                 .engine(TableEngine.MyISAM).comment("用户临时表").commit()
                                 .select("0", "name").from(TbUser.class)
+//                                .values("0","zhouning")
                 )).as("b").on("a.userName", "b.userName"));
         List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class,sql).queryList();
         System.out.println(result);
