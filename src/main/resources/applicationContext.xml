@@ -123,6 +123,7 @@
                 <entry key="slave" value-ref="targetDs"/>
             </map>
         </property>
+        <property name="defaultLookUpKey" value="slave"/>
     </bean>
 
     <!-- 数据目标jdbcTEmplate -->
