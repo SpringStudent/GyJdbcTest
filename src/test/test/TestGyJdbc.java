@@ -243,8 +243,8 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         tbUserDao.delete("0");
-        tbUserDao.batchDelete(tbUserDao.queryAll().stream().map(TbUser::getId).collect(Collectors.toList()));
-        tbUserDao.deleteWithCriteria(new Criteria().where(TbUser::getIsActive,0));
+//        tbUserDao.batchDelete(tbUserDao.queryAll().stream().map(TbUser::getId).collect(Collectors.toList()));
+//        tbUserDao.deleteWithCriteria(new Criteria().where(TbUser::getIsActive,0));
     }
 
     private static Date LocalDateToDate(LocalDate localDate) {
@@ -299,10 +299,21 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().insert("userName","realName");
-        for(int i = 0;i<100000;i++){
-            sql.values("user"+i,"周"+i);
+        List<Object[]> val = new ArrayList<>();
+        for(int i = 0;i<50000000;i++){
+            val.add(new Object[]{"user"+i,"周"+i});
         }
-        System.out.println(tbAccountDao.insertWithSql(sql));
+        sql.values(val);
+        long start = System.currentTimeMillis();
+        tbAccountDao.insertWithSql(sql);
+        System.out.println("共耗时"+(start-System.currentTimeMillis())/1000+"秒");
     }
 
+    @Test
+    public void testMasterSlave() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        System.out.println(tbAccountDao.bindMaster().queryAll());
+        System.out.println(tbAccountDao.bindSlave().queryAll());
+    }
 }

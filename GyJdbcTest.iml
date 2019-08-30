@@ -102,5 +102,6 @@
     <orderEntry type="library" name="Maven: org.hswebframework:hsweb-expands-script:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.hswebframework:hsweb-expands-security:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.10" level="project" />
+    <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.3.1" level="project" />
   </component>
 </module>

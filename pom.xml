@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.springstudent</groupId>
             <artifactId>GyJdbc</artifactId>
-            <version>14.0.0</version>
+            <version>15.0.0</version>
         </dependency>
         <!-- sping -->
         <dependency>
@@ -118,6 +118,11 @@
             <version>3.0.8</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>3.3.1</version>
+        </dependency>
     </dependencies>
 
     <build>
