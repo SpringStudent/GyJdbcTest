@@ -106,23 +106,6 @@
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.3</version>
         </dependency>
-        <dependency>
-            <groupId>com.gysoft.emqtt</groupId>
-            <artifactId>EmqttUtils</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hswebframework.web/hsweb-datasource-api -->
-        <dependency>
-            <groupId>org.hswebframework.web</groupId>
-            <artifactId>hsweb-datasource-api</artifactId>
-            <version>3.0.8</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>3.3.1</version>
-        </dependency>
     </dependencies>
 
     <build>
