@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.springstudent</groupId>
             <artifactId>GyJdbc</artifactId>
-            <version>15.0.2</version>
+            <version>15.1.0</version>
         </dependency>
         <!-- sping -->
         <dependency>
@@ -59,6 +59,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
             <version>${spring.version}</version>
         </dependency>
 
