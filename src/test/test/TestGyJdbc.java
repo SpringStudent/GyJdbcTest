@@ -314,11 +314,11 @@ public class TestGyJdbc {
     public void testMasterSlave() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        System.out.println(tbAccountDao.bindMaster().queryOne(1));
         System.out.println("common query"+tbAccountDao.queryAll());
-
         System.out.println("Master query"+tbAccountDao.bindMaster().queryAll());
         System.out.println("Slave query"+tbAccountDao.bindSlave().queryAll());
+        System.out.println("Slave2 query"+tbAccountDao.bindPoint("slave2").queryAll());
+        System.out.println("common query"+tbAccountDao.queryAll());
     }
 
     @Test

@@ -18,9 +18,10 @@ public class TbAccountServiceImpl implements TbAccountService{
     @Override
     @BindPoint("master")
     public void bindDataSource() throws Exception {
-        System.out.println(tbAccountDao.bindMaster().queryOne(1));
         System.out.println("common query"+tbAccountDao.queryAll());
         System.out.println("Master query"+tbAccountDao.bindMaster().queryAll());
         System.out.println("Slave query"+tbAccountDao.bindSlave().queryAll());
+        System.out.println("Slave2 query"+tbAccountDao.bindPoint("slave2").queryAll());
+        System.out.println("common query"+tbAccountDao.queryAll());
     }
 }
