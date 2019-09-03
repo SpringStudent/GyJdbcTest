@@ -1,7 +1,6 @@
 package com.gysoft.jdbc.test.pojo;
 
 import com.gysoft.jdbc.annotation.Table;
-import lombok.Data;
 
 /**
  * @author 周宁

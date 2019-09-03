@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.springstudent</groupId>
             <artifactId>GyJdbc</artifactId>
-            <version>15.1.0</version>
+            <version>16.0.0</version>
         </dependency>
         <!-- sping -->
         <dependency>

@@ -1,7 +1,6 @@
 package com.gysoft.jdbc.test.pojo;
 
 import com.gysoft.jdbc.annotation.Table;
-import lombok.Data;
 
 import java.util.Date;
 
@@ -10,7 +9,6 @@ import java.util.Date;
  * @Date 2018-09-21 15:11
  */
 @Table(name = "tb_user")
-@Data
 public class TbUser {
     private String id;
     private String name;
