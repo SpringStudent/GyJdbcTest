@@ -8,6 +8,7 @@ import com.gysoft.jdbc.test.dao.TbUserDao;
 import com.gysoft.jdbc.test.pojo.TbAccount;
 import com.gysoft.jdbc.test.pojo.TbRole;
 import com.gysoft.jdbc.test.pojo.TbUser;
+import com.gysoft.jdbc.test.service.AccountService;
 import com.gysoft.jdbc.test.service.TbAccountService;
 import com.gysoft.jdbc.tools.CustomResultSetExractorFactory;
 import org.junit.Test;
@@ -326,5 +327,12 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountService tbAccountService = ac.getBean(TbAccountService.class);
         tbAccountService.bindDataSource();
+    }
+
+    @Test
+    public void testBindDataSource2()throws Exception{
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        AccountService accountService = ac.getBean(AccountService.class);
+        accountService.bindDataSource();
     }
 }
