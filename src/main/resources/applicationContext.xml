@@ -167,7 +167,7 @@
                 <entry key="slave2" value-ref="nightDs"/>
             </map>
         </property>
-        <property name="defaultLookUpKey" value="slave2"/>
+        <property name="defaultLookUpKey" value="master"/>
     </bean>
 
     <!-- 数据目标jdbcTEmplate -->

@@ -47,4 +47,13 @@ public class SimpleUser {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
+
+    @Override
+    public String toString() {
+        return "SimpleUser{" +
+                "name='" + name + '\'' +
+                ", realName='" + realName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

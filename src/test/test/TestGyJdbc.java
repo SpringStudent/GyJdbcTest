@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.chrono.ChronoZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.gysoft.jdbc.bean.FuncBuilder.*;
 
@@ -110,6 +109,22 @@ public class TestGyJdbc {
     }
 
     @Test
+    public void testInsertWithSql() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        SQL sql = new SQL().insert_into(TbAccount.class, "userName", "realName")
+                .values("test", "测试")
+                .values("test2", "测试2");
+        SQL sql2 = new SQL().insert_into(TbAccount.class, "userName", "realName")
+                .select("name", "realName").from(TbUser.class);
+        SQL sql3 = new SQL().insert_into(TbAccount.class, TbAccount::getUserName, TbAccount::getRealName)
+                .select("name", "realName").from(TbUser.class).gt(TbUser::getIsActive, 0);
+        tbAccountDao.insertWithSql(sql);
+        tbAccountDao.insertWithSql(sql2);
+        tbAccountDao.insertWithSql(sql3);
+    }
+
+    @Test
     public void testQuery() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
@@ -163,8 +178,12 @@ public class TestGyJdbc {
             tUser.setIsActive(1);
         }
         tbUserDao.batchUpdate(tbUsers);
-        //根据SQL更新某个用户:UPDATE tb_user SET realName = '李森',email='1388888888@163.com' where name = 'Smith'
-        tbUserDao.updateWithSql(new SQL().update(TbUser::getRealName, "李森").update(TbUser::getEmail, "13888888888@163.com").where(TbUser::getName, "Smith"));
+        //SQL更新某个用户:UPDATE tb_user SET realName = '李森',email='1388888888@163.com' where name = 'Smith'
+        tbUserDao.updateWithSql(new SQL().update(TbUser.class).set(TbUser::getRealName, "元林").set(TbUser::getEmail, "13888888888@163.com").where(TbUser::getName, "Smith"));
+        //SQL关联更新:
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        tbAccountDao.updateWithSql(new SQL().update(TbAccount.class).as("t1").innerJoin(new Joins().with(TbUser.class).as("t2")
+                .on("t1.userName", "t2.name")).set("t1.realName", new FieldReference("t2.realName")));
     }
 
     @Test
@@ -195,58 +214,40 @@ public class TestGyJdbc {
         SQL sql5 = new SQL().select(distinct(TbUser::getCareer)).from(TbUser.class);
         List<String> careers = tbUserDao.queryWithSql(String.class, sql5).queryForList();
         System.out.println("queryWithSql" + careers);
-        //SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user AS t1 LEFT JOIN tb_role AS t2  ON t1.roleId = t2.id  WHERE t1.age > ?
-        SQL sql6 = new SQL().select("t1.name,t1.realName,t2.id,t2.roleName").from(TbUser.class)
+        //SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user t1 LEFT JOIN tb_role t2  ON t1.roleId = t2.id  WHERE t1.age > ?
+        SQL sql6 = new SQL().select("t1.name,t1.realName,t2.id as roleId,t2.roleName").from(TbUser.class)
                 .as("t1").leftJoin(new Joins().with(TbRole.class).as("t2").on("t1.roleId", "t2.id"))
                 .where("t1.age", ">", 24);
         List<UserRole> userRoles = tbUserDao.queryWithSql(UserRole.class, sql6).queryList();
         System.out.println("queryWithSql:" + userRoles);
-        //以下SQL仅仅用来演示SQL功能，工作中切勿这么些
-        //SELECT roleId FROM( SELECT DISTINCT(t.roleId) AS roleId FROM tb_user AS t UNION ALL SELECT DISTINCT(t1.roleId) AS roleId FROM tb_user AS t1)  AS t2
+        //以下SQL仅仅用来演示SQL功能
+        //SELECT roleId FROM( (SELECT DISTINCT(t.roleId) AS roleId FROM tb_user t) UNION ALL (SELECT DISTINCT(t1.roleId) AS roleId FROM tb_user t1))  t2
         SQL sql7 = new SQL().select("roleId").from(new SQL().select(distinctAs("t.roleId").as("roleId")).from(TbUser.class).as("t")
                 , new SQL().select(distinctAs("t1.roleId").as("roleId")).from(TbUser.class).as("t1")).as("t2");
         List<Integer> inUseRoleId = tbUserDao.queryWithSql(Integer.class, sql7).queryForList();
         System.out.println("queryWithSql:" + inUseRoleId);
-        //(SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user AS t1 LEFT JOIN tb_role AS t2  ON t1.roleId = t2.id  WHERE t1.age > 24)
+        //(SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user t1 LEFT JOIN tb_role t2  ON t1.roleId = t2.id  WHERE t1.age > 24)
         // UNION
-        // (SELECT t3.name,t3.realName,t4.id,t4.roleName FROM tb_user AS t3 LEFT JOIN tb_role AS t4  ON t3.roleId = t4.id  WHERE t3.career IN('JAVA'))
-        SQL sql8 = new SQL().select("t1.name,t1.realName,t2.id,t2.roleName").from(TbUser.class)
+        //(SELECT t3.name,t3.realName,t4.id,t4.roleName FROM tb_user t3 LEFT JOIN tb_role t4  ON t3.roleId = t4.id  WHERE t3.career IN('JAVA'))
+        SQL sql8 = new SQL().select("t1.name,t1.realName,t2.id as roleId,t2.roleName").from(TbUser.class)
                 .as("t1").leftJoin(new Joins().with(TbRole.class).as("t2").on("t1.roleId", "t2.id"))
                 .where("t1.age", ">", 24).union().select("t3.name,t3.realName,t4.id,t4.roleName").from(TbUser.class)
                 .as("t3").leftJoin(new Joins().with(TbRole.class).as("t4").on("t3.roleId", "t4.id"))
                 .in("t3.career", Arrays.asList("JAVA"));
         List<UserRole> userRoles2 = tbUserDao.queryWithSql(UserRole.class, sql8).queryList();
         System.out.println(userRoles2);
-        //more ...............................
     }
 
-    @Test
-    public void testInsertWithSql() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
-        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        SQL sql = new SQL().insert("id", "name", "realName", "pwd", "email", "mobile", "age", "birth", "roleId", "career", "isActive")
-                .values(4, "ins4", "插入1", "123456", "345@qq.com", "12345678901", 25, new Date(), 1, "测试", 1)
-                .values(5, "ins5", "插入2", "123456", "456@qq.com", "12345678901", 26, new Date(), 1, "测试", 1)
-                .values(6, "ins6", "插入3", "123456", "567@qq.com", "12345678901", 27, new Date(), 1, "测试", 0);
-        SQL sql2 = new SQL().insert("userName", "realName")
-                .select("name", "realName").from(TbUser.class);
-
-        SQL sql3 = new SQL().insert(TbAccount::getUserName, TbAccount::getRealName)
-                .select("name", "realName").from(TbUser.class).gt(TbUser::getIsActive, 0);
-
-        tbUserDao.insertWithSql(sql);
-        tbAccountDao.insertWithSql(sql2);
-        tbAccountDao.insertWithSql(sql3);
-    }
 
     @Test
     public void testDelete() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
-        tbUserDao.delete("0");
-//        tbUserDao.batchDelete(tbUserDao.queryAll().stream().map(TbUser::getId).collect(Collectors.toList()));
-//        tbUserDao.deleteWithCriteria(new Criteria().where(TbUser::getIsActive,0));
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        tbAccountDao.delete(1);
+        tbAccountDao.deleteWithCriteria(new Criteria().in("userName", Arrays.asList("test2")));
+        tbAccountDao.deleteWithSql(new SQL().delete("t1").from(TbAccount.class).innerJoin(
+                new Joins().with(TbUser.class).as("t2").on("t1.userName", "t2.name")
+        ));
     }
 
     private static Date LocalDateToDate(LocalDate localDate) {
@@ -260,21 +261,20 @@ public class TestGyJdbc {
     }
 
     @Test
-    public void testCreate() throws Exception {
+    public void testCreateTable() throws Exception {
         SQL sql = new SQL().createTable()
                 .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .addColumn().name("userName").varchar(50).notNull().comment("账号").commit()
                 .addColumn().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
                 .engine(TableEngine.MyISAM).comment("账号表2").commit()
-//                .values(0,"zhouning","周宁");
-//                .values(0,"pengjiajia","彭佳佳");
-                .select("0,userName,realName").from(TbAccount.class);//支持select语句的插入方法
+                .values(0, "zhouning", "周宁")
+                .values(0, "pengjiajia", "彭佳佳")
+                .values(0, "chengyuanlin", "程元麟");
+//                .select("0,userName,realName").from(TbAccount.class);//支持select语句的插入方法但是回合values的插入方法冲突
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         String tbName = tbAccountDao.createWithSql(sql);
-        //通过临时表进行inner join left join 等骚操作
-        SQL qSql = new SQL().select("*").from(tbName);
-        System.out.println(tbAccountDao.queryWithSql(TbAccount.class, qSql).queryList());
+        System.out.println(tbAccountDao.queryWithSql(TbAccount.class, new SQL().select("*").from(tbName)).queryList());
     }
 
     @Test
@@ -291,7 +291,7 @@ public class TestGyJdbc {
                                 .select("0", "name").from(TbUser.class)
 //                                .values("0","zhouning")
                 )).as("b").on("a.userName", "b.userName"));
-        List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class,sql).queryList();
+        List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class, sql).queryList();
         System.out.println(result);
         System.out.println(result.size());
     }
@@ -300,26 +300,26 @@ public class TestGyJdbc {
     public void testBatchInsert() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        SQL sql = new SQL().insert("userName","realName");
+        SQL sql = new SQL().insert_into(TbAccount.class, "userName", "realName");
         List<Object[]> val = new ArrayList<>();
-        for(int i = 0;i<50000000;i++){
-            val.add(new Object[]{"user"+i,"周"+i});
+        for (int i = 0; i < 50000; i++) {
+            val.add(new Object[]{"user" + i, "周" + i});
         }
         sql.values(val);
         long start = System.currentTimeMillis();
         tbAccountDao.insertWithSql(sql);
-        System.out.println("共耗时"+(start-System.currentTimeMillis())/1000+"秒");
+        System.out.println("共耗时" + (start - System.currentTimeMillis()) / 1000 + "秒");
     }
 
     @Test
     public void testMasterSlave() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        System.out.println("common query"+tbAccountDao.queryAll());
-        System.out.println("Master query"+tbAccountDao.bindMaster().queryAll());
-        System.out.println("Slave query"+tbAccountDao.bindSlave().queryAll());
-        System.out.println("Slave2 query"+tbAccountDao.bindPoint("slave2").queryAll());
-        System.out.println("common query"+tbAccountDao.queryAll());
+        System.out.println("common query" + tbAccountDao.queryAll());
+        System.out.println("Master query" + tbAccountDao.bindMaster().queryAll());
+        System.out.println("Slave query" + tbAccountDao.bindSlave().queryAll());
+        System.out.println("Slave2 query" + tbAccountDao.bindPoint("slave2").queryAll());
+        System.out.println("common query" + tbAccountDao.queryAll());
     }
 
     @Test
@@ -330,7 +330,7 @@ public class TestGyJdbc {
     }
 
     @Test
-    public void testBindDataSource2()throws Exception{
+    public void testBindDataSource2() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         AccountService accountService = ac.getBean(AccountService.class);
         accountService.bindDataSource();
