@@ -284,7 +284,7 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().select("*").from(TbAccount.class).as("a")
                 .innerJoin(new Joins().with(tbAccountDao.createWithSql(
-                        new SQL().createTable()
+                        new SQL().createTable().ifNotExists()
                                 .addColumn().name("id").integer().primary().notNull().autoIncrement().commit()
                                 .addColumn().name("userName").varchar(50).notNull().commit()
                                 .index().name("ix_userName").column("userName").commit()
@@ -313,6 +313,16 @@ public class TestGyJdbc {
     }
 
     @Test
+    public void testDrunk() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        SQL sql = new SQL().truncate().table("test","test2","test3");
+        tbAccountDao.drunk(sql);
+        SQL sql2 = new SQL().drop().table("test4","test5").ifExists();
+        tbAccountDao.drunk(sql2);
+    }
+
+    @Test
     public void testMasterSlave() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
@@ -335,5 +345,6 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         AccountService accountService = ac.getBean(AccountService.class);
         accountService.bindDataSource();
+
     }
 }
