@@ -326,6 +326,7 @@ public class TestGyJdbc {
     public void testTruncate() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        //清空tb_account表数据
         tbAccountDao.truncate();
     }
 
@@ -333,6 +334,7 @@ public class TestGyJdbc {
     public void testDrop() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        //删除tb_account表
         tbAccountDao.drop();
     }
 
