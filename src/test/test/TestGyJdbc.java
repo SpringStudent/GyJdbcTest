@@ -263,7 +263,7 @@ public class TestGyJdbc {
 
     @Test
     public void testCreateTable() throws Exception {
-        SQL sql = new SQL().createTable()
+        SQL sql = new SQL().create().table("test_table")
                 .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .addColumn().name("userName").varchar(50).notNull().comment("账号").commit()
                 .addColumn().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
@@ -284,7 +284,7 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().select("*").from(TbAccount.class).as("a")
                 .innerJoin(new Joins().with(tbAccountDao.createWithSql(
-                        new SQL().createTable().ifNotExists()
+                        new SQL().create().ifNotExists()
                                 .addColumn().name("id").integer().primary().notNull().autoIncrement().commit()
                                 .addColumn().name("userName").varchar(50).notNull().commit()
                                 .index().name("ix_userName").column("userName").commit()
