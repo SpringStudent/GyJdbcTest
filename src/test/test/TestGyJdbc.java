@@ -4,6 +4,7 @@ import com.gysoft.jdbc.bean.*;
 import com.gysoft.jdbc.test.bean.SimpleUser;
 import com.gysoft.jdbc.test.bean.UserRole;
 import com.gysoft.jdbc.test.dao.TbAccountDao;
+import com.gysoft.jdbc.test.dao.TbDropDao;
 import com.gysoft.jdbc.test.dao.TbUserDao;
 import com.gysoft.jdbc.test.pojo.TbAccount;
 import com.gysoft.jdbc.test.pojo.TbRole;
@@ -287,7 +288,7 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().select("*").from(TbAccount.class).as("a")
                 .innerJoin(new Joins().with(tbAccountDao.createWithSql(
-                        new SQL().create().ifNotExists()
+                        new SQL().create().ifNotExists().temporary()
                                 .addColumn().name("id").integer().primary().notNull().autoIncrement().commit()
                                 .addColumn().name("userName").varchar(50).notNull().commit()
                                 .index().name("ix_userName").column("userName").commit()
@@ -312,16 +313,16 @@ public class TestGyJdbc {
         sql.values(val);
         long start = System.currentTimeMillis();
         tbAccountDao.insertWithSql(sql);
-        System.out.println("共耗时" + (start - System.currentTimeMillis()) / 1000 + "秒");
+        System.out.println("共耗时" + (start - System.currentTimeMillis()) + "耗秒");
     }
 
     @Test
     public void testDrunk() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        SQL sql = new SQL().truncate().table("test","test2","test3");
+        SQL sql = new SQL().truncate().table("tb_account");
         tbAccountDao.drunk(sql);
-        SQL sql2 = new SQL().drop().table("test4","test5").ifExists();
+        SQL sql2 = new SQL().drop().table("test_table","test4","test5").ifExists();
         tbAccountDao.drunk(sql2);
     }
 
@@ -336,9 +337,9 @@ public class TestGyJdbc {
     @Test
     public void testDrop() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        //删除tb_account表
-        tbAccountDao.drop();
+        TbDropDao tbDropDao = (TbDropDao) ac.getBean("tbDropDao");
+        //删除tb_drop表
+        tbDropDao.drop();
     }
 
     @Test

@@ -183,6 +183,7 @@
 
     <bean id="tbUserDao" class="com.gysoft.jdbc.test.dao.TbUserDaoImpl"/>
     <bean id="tbAccountDao" class="com.gysoft.jdbc.test.dao.TbAccountDaoImpl"/>
+    <bean id="tbDropDao" class="com.gysoft.jdbc.test.dao.TbDropDaoImpl"/>
     <bean id="tbAccountService" class="com.gysoft.jdbc.test.service.TbAccountServiceImpl">
         <property name="tbAccountDao" ref="tbAccountDao"/>
     </bean>
