@@ -15,11 +15,8 @@ public class AccountService {
         this.tbAccountDao = tbAccountDao;
     }
 
-    @BindPoint("slave")
+    @BindPoint(key = "slave")
     public void bindDataSource() throws Exception {
         System.out.println("common query" + tbAccountDao.queryAll());
-        System.out.println("common query" + tbAccountDao.bindMaster().queryAll());
-        System.out.println("common query" + tbAccountDao.bindSlave().queryAll());
-        System.out.println("common query" + tbAccountDao.bindPoint("slave2").queryAll());
     }
 }

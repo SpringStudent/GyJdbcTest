@@ -159,12 +159,18 @@
         <property name="filters" value="${druid.filters}"/>
     </bean>
 
-    <bean id="dataSource" class="com.gysoft.jdbc.multi.GyJdbcRoutingDataSource">
+    <bean id="dataSource" class="com.gysoft.jdbc.multi.JdbcRoutingDataSource">
         <property name="targetDataSources">
             <map>
                 <entry key="master" value-ref="sourceDs"/>
                 <entry key="slave" value-ref="targetDs"/>
                 <entry key="slave2" value-ref="nightDs"/>
+            </map>
+        </property>
+        <property name="dataSourceKeysGroup">
+            <map>
+                <entry key="masterGroup" value="master"/>
+                <entry key="slaveGroup" value="slave,slave2"/>
             </map>
         </property>
         <property name="defaultLookUpKey" value="master"/>

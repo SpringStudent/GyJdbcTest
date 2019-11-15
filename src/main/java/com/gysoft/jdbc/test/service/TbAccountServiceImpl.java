@@ -1,12 +1,13 @@
 package com.gysoft.jdbc.test.service;
 
-import com.gysoft.jdbc.multi.BindPoint;
+import com.gysoft.jdbc.multi.*;
 import com.gysoft.jdbc.test.dao.TbAccountDao;
 
 /**
  * @author 周宁
  * @Date 2019-09-02 9:32
  */
+@BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
 public class TbAccountServiceImpl implements TbAccountService{
 
     private TbAccountDao tbAccountDao;
@@ -16,12 +17,59 @@ public class TbAccountServiceImpl implements TbAccountService{
     }
 
     @Override
-    @BindPoint("slave")
+    @BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
     public void bindDataSource() throws Exception {
-        System.out.println("common query"+tbAccountDao.queryAll());
-        System.out.println("Master query"+tbAccountDao.bindMaster().queryAll());
-        System.out.println("Slave query"+tbAccountDao.bindSlave().queryAll());
-        System.out.println("Slave2 query"+tbAccountDao.bindPoint("slave2").queryAll());
-        System.out.println("common query"+tbAccountDao.queryAll());
+        System.out.println(DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    @BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
+    public void bindDataSource2() throws Exception {
+        System.out.println(DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    @BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
+    public void bindDataSource3() throws Exception {
+        System.out.println(DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    @BindPoint(group = "slaveGroup")
+    public void bindDataSource4() throws Exception {
+        System.out.println(DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    @BindPoint(group = "slaveGroup")
+    public void bindDataSource5() throws Exception {
+        System.out.println(DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    @BindPoint(group = "slaveGroup")
+    public void bindDataSource6() throws Exception {
+        System.out.println(DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    public void bindDataSource7() throws Exception {
+        System.out.println(DataSourceBindHolder.getDataSource());
+        tbAccountDao.bindGroup("slaveGroup");
+        System.out.println(DataSourceBindHolder.getDataSource());
+        System.out.println(DataSourceBindHolder.getDataSource());
+        System.out.println(DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    @BindPoint(key = "slave9")
+    public void bindDataSource8() throws Exception {
+        System.out.println(DataSourceBindHolder.getDataSource());
+        System.out.println(DataSourceBindHolder.getDataSource());
+        System.out.println(DataSourceBindHolder.getDataSource());
+        tbAccountDao.bindKey("slave0");
+        System.out.println(DataSourceBindHolder.getDataSource());
+        System.out.println(DataSourceBindHolder.getDataSource());
+
     }
 }

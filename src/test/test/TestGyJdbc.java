@@ -343,27 +343,24 @@ public class TestGyJdbc {
     }
 
     @Test
-    public void testMasterSlave() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        System.out.println("common query" + tbAccountDao.queryAll());
-        System.out.println("Master query" + tbAccountDao.bindMaster().queryAll());
-        System.out.println("Slave query" + tbAccountDao.bindSlave().queryAll());
-        System.out.println("Slave2 query" + tbAccountDao.bindPoint("slave2").queryAll());
-        System.out.println("common query" + tbAccountDao.queryAll());
-    }
-
-    @Test
     public void testBindDataSource() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountService tbAccountService = ac.getBean(TbAccountService.class);
         tbAccountService.bindDataSource();
+        tbAccountService.bindDataSource2();
+        tbAccountService.bindDataSource3();
+        tbAccountService.bindDataSource4();
+        tbAccountService.bindDataSource5();
+        tbAccountService.bindDataSource6();
+        tbAccountService.bindDataSource7();
+        tbAccountService.bindDataSource8();
     }
 
     @Test
     public void testBindDataSource2() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         AccountService accountService = ac.getBean(AccountService.class);
+        accountService.bindDataSource();
         accountService.bindDataSource();
 
     }
