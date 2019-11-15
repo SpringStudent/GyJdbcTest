@@ -67,7 +67,7 @@ public class TbAccountServiceImpl implements TbAccountService{
         System.out.println(DataSourceBindHolder.getDataSource());
         System.out.println(DataSourceBindHolder.getDataSource());
         System.out.println(DataSourceBindHolder.getDataSource());
-        tbAccountDao.bindKey("slave0");
+        tbAccountDao.bindKey("master");
         System.out.println(DataSourceBindHolder.getDataSource());
         System.out.println(DataSourceBindHolder.getDataSource());
 

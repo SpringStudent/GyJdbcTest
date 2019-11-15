@@ -361,7 +361,7 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         AccountService accountService = ac.getBean(AccountService.class);
         accountService.bindDataSource();
-        accountService.bindDataSource();
-
+        accountService.bindDataSource2();
+        accountService.bindDataSource2();
     }
 }
