@@ -196,6 +196,5 @@
     <bean id="accountService" class="com.gysoft.jdbc.test.service.AccountService">
         <property name="tbAccountDao" ref="tbAccountDao"/>
     </bean>
-    <bean id="bindPointAspect" class="com.gysoft.jdbc.multi.BindPointAspect"/>
     <aop:aspectj-autoproxy/>
 </beans>

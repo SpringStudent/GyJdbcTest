@@ -8,7 +8,7 @@ import java.util.Date;
  * @author 周宁
  * @Date 2018-09-21 15:11
  */
-@Table(name = "tb_user")
+@Table(name = "tb_user",pk = "id")
 public class TbUser {
     private String id;
     private String name;
