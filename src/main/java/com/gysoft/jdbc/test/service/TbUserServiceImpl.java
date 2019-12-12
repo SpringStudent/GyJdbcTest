@@ -47,7 +47,6 @@ public class TbUserServiceImpl implements TbUserService {
         tbUserDao.delete("id");
         //DELTE FROm tb_user where userName in ("test2");
         tbUserDao.deleteWithCriteria(new Criteria().in("userName", Arrays.asList("test2")));
-        //...这里就不一一列举了
     }
 
 }

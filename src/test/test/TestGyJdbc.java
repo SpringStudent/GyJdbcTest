@@ -121,7 +121,7 @@ public class TestGyJdbc {
         SQL sql3 = new SQL().insert_into(TbAccount.class, TbAccount::getUserName, TbAccount::getRealName)
                 .select("name", "realName").from(TbUser.class).gt(TbUser::getIsActive, 0);
         SQL sql4 = new SQL().insert_into(TbAccount.class, "userName", "realName")
-                .select(new ValueReference("laoda"),new ValueReference("老大")).from("dual");
+                .select(new ValueReference("laoda"), new ValueReference("老大")).from("dual");
         tbAccountDao.insertWithSql(sql);
         tbAccountDao.insertWithSql(sql2);
         tbAccountDao.insertWithSql(sql3);
@@ -249,7 +249,7 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         tbAccountDao.delete(1);
         tbAccountDao.deleteWithCriteria(new Criteria().in("userName", Arrays.asList("test2")));
-        tbAccountDao.deleteWithSql(new SQL().delete().from(TbAccount.class).where("userName","Smith"));
+        tbAccountDao.deleteWithSql(new SQL().delete().from(TbAccount.class).where("userName", "Smith"));
         tbAccountDao.deleteWithSql(new SQL().delete("t1").from(TbAccount.class).innerJoin(
                 new Joins().with(TbUser.class).as("t2").on("t1.userName", "t2.name")
         ));
@@ -322,7 +322,7 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().truncate().table("tb_account");
         tbAccountDao.drunk(sql);
-        SQL sql2 = new SQL().drop().table("test_table","test4","test5").ifExists();
+        SQL sql2 = new SQL().drop().table("test_table", "test4", "test5").ifExists();
         tbAccountDao.drunk(sql2);
     }
 
