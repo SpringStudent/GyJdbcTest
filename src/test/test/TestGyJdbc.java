@@ -122,11 +122,28 @@ public class TestGyJdbc {
                 .select("name", "realName").from(TbUser.class).gt(TbUser::getIsActive, 0);
         SQL sql4 = new SQL().insert_into(TbAccount.class, "userName", "realName")
                 .select(new ValueReference("laoda"), new ValueReference("老大")).from("dual");
+
+        SQL sql5 = new SQL().insert_into(TbAccount.class).values(100,"mmd","么么哒");
+        SQL sql6 = new SQL().insert_into(TbAccount.class).values(101,"ok","没问题");
+        SQL sql7 = new SQL().insert_into(TbAccount.class).values(102,"halou","哈喽");
+
+        SQL sql8 = new SQL().insert_into(TbAccount.class).values(100,"ouhou","what is your problem")
+                .values(100,"ciao","拉拉呱")
+                .onDuplicateKeyUpdate("userName",new FieldReference("Values(userName)"))
+                .onDuplicateKeyUpdate("realName",new FieldReference("Values(realName)"));
+        SQL sql9 = new SQL().insert_into("tb_account").values("102","sda","sda")
+                .onDuplicateKeyUpdate("userName","enen");
         tbAccountDao.insertWithSql(sql);
         tbAccountDao.insertWithSql(sql2);
         tbAccountDao.insertWithSql(sql3);
         tbAccountDao.insertWithSql(sql4);
+        tbAccountDao.insertWithSql(sql5);
+        tbAccountDao.insertWithSql(sql6);
+        tbAccountDao.insertWithSql(sql7);
+        tbAccountDao.insertWithSql(sql8);
+        tbAccountDao.insertWithSql(sql9);
     }
+
 
     @Test
     public void testQuery() throws Exception {
