@@ -123,16 +123,22 @@ public class TestGyJdbc {
         SQL sql4 = new SQL().insert_into(TbAccount.class, "userName", "realName")
                 .select(new ValueReference("laoda"), new ValueReference("老大")).from("dual");
 
-        SQL sql5 = new SQL().insert_into(TbAccount.class).values(100,"mmd","么么哒");
-        SQL sql6 = new SQL().insert_into(TbAccount.class).values(101,"ok","没问题");
-        SQL sql7 = new SQL().insert_into(TbAccount.class).values(102,"halou","哈喽");
+        SQL sql5 = new SQL().insert_into(TbAccount.class).values(100, "mmd", "么么哒");
+        SQL sql6 = new SQL().insert_into(TbAccount.class).values(101, "ok", "没问题");
+        SQL sql7 = new SQL().insert_into(TbAccount.class).values(102, "halou", "哈喽");
 
-        SQL sql8 = new SQL().insert_into(TbAccount.class).values(100,"ouhou","what is your problem")
-                .values(100,"ciao","拉拉呱")
-                .onDuplicateKeyUpdate("userName",new FieldReference("Values(userName)"))
-                .onDuplicateKeyUpdate("realName",new FieldReference("Values(realName)"));
-        SQL sql9 = new SQL().insert_into("tb_account").values("102","sda","sda")
-                .onDuplicateKeyUpdate("userName","enen");
+        SQL sql8 = new SQL().insert_into(TbAccount.class).values(100, "ouhou", "what is your problem")
+                .values(100, "ciao", "拉拉呱")
+                .onDuplicateKeyUpdate("userName", new FieldReference("Values(userName)"))
+                .onDuplicateKeyUpdate("realName", new FieldReference("Values(realName)"));
+        SQL sql9 = new SQL().insert_into("tb_account").values("102", "sda", "sda")
+                .onDuplicateKeyUpdate("userName", "enen");
+
+        SQL sql10 = new SQL().insert_ignore_into(TbAccount.class).values(100, "mmd", "么么哒");
+        SQL sql11 = new SQL().insert_ignore_into("tb_account").values(101, "ok", "没问题");
+        SQL sql12 = new SQL().insert_ignore_into(TbAccount.class,TbAccount::getId
+                ,TbAccount::getUserName,TbAccount::getRealName).values(102, "halou", "哈喽");
+
         tbAccountDao.insertWithSql(sql);
         tbAccountDao.insertWithSql(sql2);
         tbAccountDao.insertWithSql(sql3);
@@ -142,6 +148,9 @@ public class TestGyJdbc {
         tbAccountDao.insertWithSql(sql7);
         tbAccountDao.insertWithSql(sql8);
         tbAccountDao.insertWithSql(sql9);
+        tbAccountDao.insertWithSql(sql10);
+        tbAccountDao.insertWithSql(sql11);
+        tbAccountDao.insertWithSql(sql12);
     }
 
 
@@ -288,6 +297,8 @@ public class TestGyJdbc {
                 .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .addColumn().name("userName").varchar(50).notNull().comment("账号").commit()
                 .addColumn().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
+                .index().column("userName").name("ix_userName").unique().commit()
+                .index().column("userName","realName").name("ix_userName_realName").commit()
                 .engine(TableEngine.MyISAM).comment("账号表2").commit()
                 .values(0, "zhouning", "周宁")
                 .values(0, "laoning", "老宁")
