@@ -293,12 +293,12 @@ public class TestGyJdbc {
 
     @Test
     public void testCreateTable() throws Exception {
-        SQL sql = new SQL().create().table("test_table")
+        SQL sql = new SQL().create().table("test_table").ifNotExists()
                 .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .addColumn().name("userName").varchar(50).notNull().comment("账号").commit()
                 .addColumn().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
-                .index().column("userName").name("ix_userName").unique().commit()
-                .index().column("userName","realName").name("ix_userName_realName").commit()
+                .index().column("userName").name("ix_userName").unique().usingBtree().comment("用户名索引").commit()
+                .index().column("userName","realName").name("ix_userName_realName").usingHash().comment("这是一个联合索引").commit()
                 .engine(TableEngine.MyISAM).comment("账号表2").commit()
                 .values(0, "zhouning", "周宁")
                 .values(0, "laoning", "老宁")
@@ -308,6 +308,13 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         String tbName = tbAccountDao.createWithSql(sql);
         System.out.println(tbAccountDao.queryWithSql(TbAccount.class, new SQL().select("*").from(tbName)).queryList());
+        SQL sql2 = new SQL().create().table("test_table2")
+                .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
+                .addColumn().name("name").varchar(100).notNull().commit()
+                .addColumn().name("birth").datetime().defaultNull().commit()
+                .index().column("name").comment("嘿嘿").commit()
+                .engine(TableEngine.MyISAM).comment("测试表2").commit();
+        tbAccountDao.createWithSql(sql2);
     }
 
     @Test
