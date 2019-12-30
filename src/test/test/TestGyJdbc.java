@@ -113,30 +113,30 @@ public class TestGyJdbc {
     public void testInsertWithSql() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        SQL sql = new SQL().insert_into(TbAccount.class, "userName", "realName")
+        SQL sql = new SQL().insertInto(TbAccount.class, "userName", "realName")
                 .values("test", "测试")
                 .values("test2", "测试2");
-        SQL sql2 = new SQL().insert_into(TbAccount.class, "userName", "realName")
+        SQL sql2 = new SQL().insertInto(TbAccount.class, "userName", "realName")
                 .select("name", "realName").from(TbUser.class);
-        SQL sql3 = new SQL().insert_into(TbAccount.class, TbAccount::getUserName, TbAccount::getRealName)
+        SQL sql3 = new SQL().insertInto(TbAccount.class, TbAccount::getUserName, TbAccount::getRealName)
                 .select("name", "realName").from(TbUser.class).gt(TbUser::getIsActive, 0);
-        SQL sql4 = new SQL().insert_into(TbAccount.class, "userName", "realName")
+        SQL sql4 = new SQL().insertInto(TbAccount.class, "userName", "realName")
                 .select(new ValueReference("laoda"), new ValueReference("老大")).from("dual");
 
-        SQL sql5 = new SQL().insert_into(TbAccount.class).values(100, "mmd", "么么哒");
-        SQL sql6 = new SQL().insert_into(TbAccount.class).values(101, "ok", "没问题");
-        SQL sql7 = new SQL().insert_into(TbAccount.class).values(102, "halou", "哈喽");
+        SQL sql5 = new SQL().insertInto(TbAccount.class).values(100, "mmd", "么么哒");
+        SQL sql6 = new SQL().insertInto(TbAccount.class).values(101, "ok", "没问题");
+        SQL sql7 = new SQL().insertInto(TbAccount.class).values(102, "halou", "哈喽");
 
-        SQL sql8 = new SQL().insert_into(TbAccount.class).values(100, "ouhou", "what is your problem")
+        SQL sql8 = new SQL().insertInto(TbAccount.class).values(100, "ouhou", "what is your problem")
                 .values(100, "ciao", "拉拉呱")
                 .onDuplicateKeyUpdate("userName", new FieldReference("Values(userName)"))
                 .onDuplicateKeyUpdate("realName", new FieldReference("Values(realName)"));
-        SQL sql9 = new SQL().insert_into("tb_account").values("102", "sda", "sda")
+        SQL sql9 = new SQL().insertInto("tb_account").values("102", "sda", "sda")
                 .onDuplicateKeyUpdate("userName", "enen");
 
-        SQL sql10 = new SQL().insert_ignore_into(TbAccount.class).values(100, "mmd", "么么哒");
-        SQL sql11 = new SQL().insert_ignore_into("tb_account").values(101, "ok", "没问题");
-        SQL sql12 = new SQL().insert_ignore_into(TbAccount.class,TbAccount::getId
+        SQL sql10 = new SQL().insertIgnoreInto(TbAccount.class).values(100, "mmd", "么么哒");
+        SQL sql11 = new SQL().insertIgnoreInto("tb_account").values(101, "ok", "没问题");
+        SQL sql12 = new SQL().insertIgnoreInto(TbAccount.class,TbAccount::getId
                 ,TbAccount::getUserName,TbAccount::getRealName).values(102, "halou", "哈喽");
 
         tbAccountDao.insertWithSql(sql);
@@ -294,9 +294,9 @@ public class TestGyJdbc {
     @Test
     public void testCreateTable() throws Exception {
         SQL sql = new SQL().create().table("test_table").ifNotExists()
-                .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
-                .addColumn().name("userName").varchar(50).notNull().comment("账号").commit()
-                .addColumn().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
+                .column().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
+                .column().name("userName").varchar(50).notNull().comment("账号").commit()
+                .column().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
                 .index().column("userName").name("ix_userName").unique().usingBtree().comment("用户名索引").commit()
                 .index().column("userName","realName").name("ix_userName_realName").usingHash().comment("这是一个联合索引").commit()
                 .engine(TableEngine.MyISAM).comment("账号表2").commit()
@@ -309,9 +309,9 @@ public class TestGyJdbc {
         String tbName = tbAccountDao.createWithSql(sql);
         System.out.println(tbAccountDao.queryWithSql(TbAccount.class, new SQL().select("*").from(tbName)).queryList());
         SQL sql2 = new SQL().create().table("test_table2")
-                .addColumn().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
-                .addColumn().name("name").varchar(100).notNull().commit()
-                .addColumn().name("birth").datetime().defaultNull().commit()
+                .column().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
+                .column().name("name").varchar(100).notNull().commit()
+                .column().name("birth").datetime().defaultNull().commit()
                 .index().column("name").comment("嘿嘿").commit()
                 .engine(TableEngine.MyISAM).comment("测试表2").commit();
         tbAccountDao.createWithSql(sql2);
@@ -324,8 +324,8 @@ public class TestGyJdbc {
         SQL sql = new SQL().select("*").from(TbAccount.class).as("a")
                 .innerJoin(new Joins().with(tbAccountDao.createWithSql(
                         new SQL().create().ifNotExists().table()
-                                .addColumn().name("id").integer().primary().notNull().autoIncrement().commit()
-                                .addColumn().name("userName").varchar(50).notNull().commit()
+                                .column().name("id").integer().primary().notNull().autoIncrement().commit()
+                                .column().name("userName").varchar(50).notNull().commit()
                                 .index().name("ix_userName").column("userName").commit()
                                 .engine(TableEngine.MyISAM).comment("用户临时表").commit()
                                 .select(new ValueReference(0), "name").from(TbUser.class)
@@ -340,7 +340,7 @@ public class TestGyJdbc {
     public void testBatchInsert() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        SQL sql = new SQL().insert_into(TbAccount.class, "userName", "realName");
+        SQL sql = new SQL().insertInto(TbAccount.class, "userName", "realName");
         List<Object[]> val = new ArrayList<>();
         for (int i = 0; i < 50000; i++) {
             val.add(new Object[]{"user" + i, "周" + i});
