@@ -136,8 +136,8 @@ public class TestGyJdbc {
 
         SQL sql10 = new SQL().insertIgnoreInto(TbAccount.class).values(100, "mmd", "么么哒");
         SQL sql11 = new SQL().insertIgnoreInto("tb_account").values(101, "ok", "没问题");
-        SQL sql12 = new SQL().insertIgnoreInto(TbAccount.class,TbAccount::getId
-                ,TbAccount::getUserName,TbAccount::getRealName).values(102, "halou", "哈喽");
+        SQL sql12 = new SQL().insertIgnoreInto(TbAccount.class, TbAccount::getId
+                , TbAccount::getUserName, TbAccount::getRealName).values(102, "halou", "哈喽");
 
         tbAccountDao.insertWithSql(sql);
         tbAccountDao.insertWithSql(sql2);
@@ -298,12 +298,11 @@ public class TestGyJdbc {
                 .column().name("userName").varchar(50).notNull().comment("账号").commit()
                 .column().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
                 .index().column("userName").name("ix_userName").unique().usingBtree().comment("用户名索引").commit()
-                .index().column("userName","realName").name("ix_userName_realName").usingHash().comment("这是一个联合索引").commit()
+                .index().column("userName", "realName").name("ix_userName_realName").usingHash().comment("这是一个联合索引").commit()
                 .engine(TableEngine.MyISAM).comment("账号表2").commit()
                 .values(0, "zhouning", "周宁")
                 .values(0, "laoning", "老宁")
                 .values(0, "daning", "大宁");
-//                .select("0,userName,realName").from(TbAccount.class);//支持select语句的插入方法但是会与values的插入方法冲突
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         String tbName = tbAccountDao.createWithSql(sql);
@@ -313,7 +312,8 @@ public class TestGyJdbc {
                 .column().name("name").varchar(100).notNull().commit()
                 .column().name("birth").datetime().defaultNull().commit()
                 .index().column("name").comment("嘿嘿").commit()
-                .engine(TableEngine.MyISAM).comment("测试表2").commit();
+                .engine(TableEngine.MyISAM).comment("测试表2").commit()
+                .select(new ValueReference(0), "realName", "birth").from("tb_user");
         tbAccountDao.createWithSql(sql2);
     }
 
@@ -326,14 +326,12 @@ public class TestGyJdbc {
                         new SQL().create().ifNotExists().table()
                                 .column().name("id").integer().primary().notNull().autoIncrement().commit()
                                 .column().name("userName").varchar(50).notNull().commit()
-                                .index().name("ix_userName").column("userName").commit()
-                                .engine(TableEngine.MyISAM).comment("用户临时表").commit()
+                                .index().unique().name("ix_userName").column("userName").commit()
+                                .engine(TableEngine.MEMORY).comment("用户临时表").commit()
                                 .select(new ValueReference(0), "name").from(TbUser.class)
-//                                .values("0","zhouning")
                 )).as("b").on("a.userName", "b.userName"));
         List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class, sql).queryList();
         System.out.println(result);
-        System.out.println(result.size());
     }
 
     @Test
