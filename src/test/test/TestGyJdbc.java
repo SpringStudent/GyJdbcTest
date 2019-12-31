@@ -315,22 +315,16 @@ public class TestGyJdbc {
                 .engine(TableEngine.MyISAM).comment("测试表2").commit()
                 .select(new ValueReference(0), "realName", "birth").from("tb_user");
         tbAccountDao.createWithSql(sql2);
-    }
-
-    @Test
-    public void testUseTmpTableQuery() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        SQL sql = new SQL().select("*").from(TbAccount.class).as("a")
+        SQL sql3 = new SQL().select("a.*").from(TbAccount.class).as("a")
                 .innerJoin(new Joins().with(tbAccountDao.createWithSql(
                         new SQL().create().ifNotExists().table()
-                                .column().name("id").integer().primary().notNull().autoIncrement().commit()
+                                .column().name("id").varchar(32).primary().notNull().commit()
                                 .column().name("userName").varchar(50).notNull().commit()
                                 .index().unique().name("ix_userName").column("userName").commit()
-                                .engine(TableEngine.MEMORY).comment("用户临时表").commit()
-                                .select(new ValueReference(0), "name").from(TbUser.class)
+                                .engine(TableEngine.MyISAM).comment("用户临时表").commit()
+                                .select("id", "name").from(TbUser.class)
                 )).as("b").on("a.userName", "b.userName"));
-        List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class, sql).queryList();
+        List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class, sql3).queryList();
         System.out.println(result);
     }
 
