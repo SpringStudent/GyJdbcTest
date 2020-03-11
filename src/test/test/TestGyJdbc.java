@@ -139,6 +139,11 @@ public class TestGyJdbc {
         SQL sql12 = new SQL().insertIgnoreInto(TbAccount.class, TbAccount::getId
                 , TbAccount::getUserName, TbAccount::getRealName).values(102, "halou", "哈喽");
 
+        SQL sql13 = new SQL().replaceInto(TbAccount.class).values(100, "gan", "干");
+        SQL sql14 = new SQL().replaceInto(TbAccount.class,"id","userName","realName").values(101, "yyes", "是的老哥");
+        SQL sql15 = new SQL().replaceInto(TbAccount.class, TbAccount::getId
+                , TbAccount::getUserName, TbAccount::getRealName).values(102, "hadssadao", "哈斯达根");
+
         tbAccountDao.insertWithSql(sql);
         tbAccountDao.insertWithSql(sql2);
         tbAccountDao.insertWithSql(sql3);
@@ -151,6 +156,9 @@ public class TestGyJdbc {
         tbAccountDao.insertWithSql(sql10);
         tbAccountDao.insertWithSql(sql11);
         tbAccountDao.insertWithSql(sql12);
+        tbAccountDao.insertWithSql(sql13);
+        tbAccountDao.insertWithSql(sql14);
+        tbAccountDao.insertWithSql(sql15);
     }
 
 
@@ -186,7 +194,7 @@ public class TestGyJdbc {
         PageResult<TbUser> pageResult = tbUserDao.pageQuery(new Page(1, 2));
         System.out.println("pageQuery:" + pageResult);
         //分页条件查询:SELECT * FROM tb_user WHERE age < 28 LIMIT 0,2
-        PageResult<TbUser> pageResult2 = tbUserDao.pageQueryWithCriteria(new Page(1, 2), new Criteria().lt(TbUser::getAge, 28));
+        PageResult<TbUser> pageResult2 = tbUserDao.pageQueryWithCriteria(new Page(1, 2), new Criteria().lt(TbUser::getAge, 28).orderBy(new Sort(TbUser::getAge)));
         System.out.println("pageQueryWithCriteria:" + pageResult2);
         //按年龄降序查询用户:SELECT * FROM tb_user ORDER BY age DESC
         List<TbUser> tbUsers4 = tbUserDao.queryWithCriteria(new Criteria().orderBy(new Sort(TbUser::getAge)));
@@ -293,7 +301,7 @@ public class TestGyJdbc {
 
     @Test
     public void testCreateTable() throws Exception {
-        SQL sql = new SQL().create().table("test_table").ifNotExists()
+        SQL sql = new SQL().create().table("test_table").temporary().ifNotExists()
                 .column().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .column().name("userName").varchar(50).notNull().comment("账号").commit()
                 .column().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
@@ -307,7 +315,7 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         String tbName = tbAccountDao.createWithSql(sql);
         System.out.println(tbAccountDao.queryWithSql(TbAccount.class, new SQL().select("*").from(tbName)).queryList());
-        SQL sql2 = new SQL().create().table("test_table2")
+        SQL sql2 = new SQL().create().table("test_table2").ifNotExists()
                 .column().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .column().name("name").varchar(100).notNull().commit()
                 .column().name("birth").datetime().defaultNull().commit()
