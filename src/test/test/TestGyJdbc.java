@@ -389,6 +389,7 @@ public class TestGyJdbc {
         tbAccountService.bindDataSource6();
         tbAccountService.bindDataSource7();
         tbAccountService.bindDataSource8();
+        tbAccountService.bindDataSource9();
     }
 
     @Test

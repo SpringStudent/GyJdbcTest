@@ -14,4 +14,5 @@ public interface TbAccountService {
     void bindDataSource6()throws Exception;
     void bindDataSource7()throws Exception;
     void bindDataSource8()throws Exception;
+    void bindDataSource9() throws Exception;
 }
