@@ -187,7 +187,6 @@
     </bean>
 
 
-    <bean id="tbUserDao" class="com.gysoft.jdbc.test.dao.TbUserDaoImpl"/>
     <bean id="tbAccountDao" class="com.gysoft.jdbc.test.dao.TbAccountDaoImpl"/>
     <bean id="tbDropDao" class="com.gysoft.jdbc.test.dao.TbDropDaoImpl"/>
     <bean id="tbAccountService" class="com.gysoft.jdbc.test.service.TbAccountServiceImpl">
@@ -196,5 +195,14 @@
     <bean id="accountService" class="com.gysoft.jdbc.test.service.AccountService">
         <property name="tbAccountDao" ref="tbAccountDao"/>
     </bean>
+
+    <bean id="SpringJdbc" class="com.gysoft.jdbc.dao.SpringJdbc">
+        <constructor-arg index="0" ref="jdbcTemplate"/>
+    </bean>
+
+    <bean id="tbUserDao" class="com.gysoft.jdbc.test.dao.TbUserDaoImpl">
+        <property name="springJdbc" ref="SpringJdbc"/>
+    </bean>
+
     <aop:aspectj-autoproxy/>
 </beans>
