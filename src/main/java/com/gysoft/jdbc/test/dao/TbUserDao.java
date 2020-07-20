@@ -2,7 +2,6 @@ package com.gysoft.jdbc.test.dao;
 
 import com.gysoft.jdbc.dao.EntityDao;
 import com.gysoft.jdbc.test.pojo.TbUser;
-import java.util.List;
 
 /**
  * @author 周宁
@@ -11,7 +10,4 @@ import java.util.List;
 
 public interface TbUserDao extends EntityDao<TbUser,String> {
 
-    List<TbUser> queryUsersByNames(List<String> names) throws Exception;
-
-    List<TbUser> queryUserByNamesOrAge(List<String> names,Integer age)throws Exception;
 }
