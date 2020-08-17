@@ -106,7 +106,7 @@ public class TestGyJdbc {
         tbUsers.add(tbUser3);
         tbUsers.add(tbUser4);
         tbUsers.add(tbUser5);
-        tbUserDao.batchSave(tbUsers);
+        System.out.println(tbUserDao.saveAll(tbUsers));
     }
 
     @Test
@@ -348,6 +348,22 @@ public class TestGyJdbc {
         sql.values(val);
         long start = System.currentTimeMillis();
         tbAccountDao.insertWithSql(sql);
+        System.out.println("共耗时" + (start - System.currentTimeMillis()) + "耗秒");
+    }
+
+    @Test
+    public void testSaveAccount() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        List<TbAccount> result = new ArrayList<>();
+        for (int i = 0; i < 5000; i++) {
+            TbAccount tbAccount = new TbAccount();
+            tbAccount.setRealName("周宁"+i);
+            tbAccount.setUserName("user"+i);
+            result.add(tbAccount);
+        }
+        long start = System.currentTimeMillis();
+        System.out.println(tbAccountDao.saveAll(result));
         System.out.println("共耗时" + (start - System.currentTimeMillis()) + "耗秒");
     }
 
