@@ -180,7 +180,7 @@ public class TestGyJdbc {
         TbUser tbUser = tbUserDao.queryOne(new Criteria().where(TbUser::getName, "zhouning").andIfAbsent(TbUser::getName, null));
         System.out.println("queryOne:" + tbUser);
         //根据用户名批量查询:SELECT * FROM tb_user where name in('zhouning','yinhw');
-        List<TbUser> tbUsers = tbUserDao.queryWithCriteria(new Criteria().in(TbUser::getName, Arrays.asList("zhouning", "yinhw")));
+        List<TbUser> tbUsers = tbUserDao.queryWithCriteria(new Criteria().in(TbUser::getName, Arrays.asList("zhouning", "hxf")));
         System.out.println("queryWithCriteria:" + tbUsers);
         //根据关键字和年龄模糊查询:SELECT * FROM tb_user where age > 26 and (realName like '%l%' or name like '%l%')
         String searchKey = "l";
@@ -217,11 +217,13 @@ public class TestGyJdbc {
         }
         tbUserDao.batchUpdate(tbUsers);
         //SQL更新某个用户:UPDATE tb_user SET realName = '李森',email='1388888888@163.com' where name = 'Smith'
-        tbUserDao.updateWithSql(new SQL().update(TbUser.class).set(TbUser::getRealName, "元林").set(TbUser::getEmail, "13888888888@163.com").where(TbUser::getName, "Smith"));
+        int rows = tbUserDao.updateWithSql(new SQL().update(TbUser.class).set(TbUser::getRealName, "元林").set(TbUser::getEmail, "13888888888@163.com").where(TbUser::getName, "Smith"));
+        System.out.println(rows);
         //SQL关联更新:
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        tbAccountDao.updateWithSql(new SQL().update(TbAccount.class).as("t1").innerJoin(new Joins().with(TbUser.class).as("t2")
+        int effectRows = tbAccountDao.updateWithSql(new SQL().update(TbAccount.class).as("t1").innerJoin(new Joins().with(TbUser.class).as("t2")
                 .on("t1.userName", "t2.name")).set("t1.realName", new FieldReference("t2.realName")));
+        System.out.println(effectRows);
     }
 
     @Test
@@ -356,7 +358,7 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         List<TbAccount> result = new ArrayList<>();
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < 50000; i++) {
             TbAccount tbAccount = new TbAccount();
             tbAccount.setRealName("周宁"+i);
             tbAccount.setUserName("user"+i);

@@ -86,8 +86,6 @@ public class TbAccountServiceImpl implements TbAccountService{
     @BindPoint(key = "slave2")
     public void bindDataSource9() throws Exception {
         System.out.println(DataSourceBindHolder.getDataSource());
-        tbAccountDao.insertWithSql(new SQL().insertInto(TbAccount.class,TbAccount::getId,TbAccount::getRealName,TbAccount::getUserName)
-        .values(-1,"宁宁","ningning"));
-        System.out.println(1/0);
+        tbAccountDao.insertWithSql(new SQL().insertInto(TbAccount.class,TbAccount::getId,TbAccount::getRealName,TbAccount::getUserName).values(-1,"宁宁","ningning"));
     }
 }
