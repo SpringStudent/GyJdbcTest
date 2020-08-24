@@ -370,6 +370,31 @@ public class TestGyJdbc {
     }
 
     @Test
+    public void testSaveUser() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
+        List<TbUser> tbUsers = new ArrayList<>();
+
+        for(int i =0 ;i<1000000;i++){
+            TbUser tbUser1 = new TbUser();
+            tbUser1.setAge(26);
+            tbUser1.setBirth(LocalDateToDate(LocalDate.of(1993, 8, 27)));
+            tbUser1.setCareer("Java");
+            tbUser1.setEmail("22888@qq.com");
+            tbUser1.setMobile(i+"");
+            tbUser1.setName("zhouning"+i);
+            tbUser1.setRealName("周宁"+i);
+            tbUser1.setPwd("123456");
+            tbUser1.setIsActive(0);
+            tbUser1.setRoleId(1);
+            tbUser1.setId(genId());
+            tbUsers.add(tbUser1);
+        }
+        int effects = tbUserDao.saveAll(tbUsers);
+        System.out.println(effects);
+    }
+
+    @Test
     public void testDrunk() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
