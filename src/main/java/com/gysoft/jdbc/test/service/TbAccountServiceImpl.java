@@ -2,6 +2,7 @@ package com.gysoft.jdbc.test.service;
 
 import com.gysoft.jdbc.bean.SQL;
 import com.gysoft.jdbc.multi.*;
+import com.gysoft.jdbc.multi.balance.RandomLoadBalance;
 import com.gysoft.jdbc.test.dao.TbAccountDao;
 import com.gysoft.jdbc.test.pojo.TbAccount;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author 周宁
  * @Date 2019-09-02 9:32
  */
-@BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
-public class TbAccountServiceImpl implements TbAccountService{
+@BindPoint(group = "slaveGroup", loadBalance = RandomLoadBalance.class)
+public class TbAccountServiceImpl implements TbAccountService {
 
     private TbAccountDao tbAccountDao;
 
@@ -21,21 +22,21 @@ public class TbAccountServiceImpl implements TbAccountService{
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
+    @BindPoint(group = "slaveGroup", loadBalance = RandomLoadBalance.class)
     public void bindDataSource() throws Exception {
         System.out.println(DataSourceBindHolder.getDataSource());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
+    @BindPoint(group = "slaveGroup", loadBalance = RandomLoadBalance.class)
     public void bindDataSource2() throws Exception {
         System.out.println(DataSourceBindHolder.getDataSource());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @BindPoint(group = "slaveGroup",loadBalance = RandomLoadBalance.class)
+    @BindPoint(group = "slaveGroup", loadBalance = RandomLoadBalance.class)
     public void bindDataSource3() throws Exception {
         System.out.println(DataSourceBindHolder.getDataSource());
     }
@@ -76,6 +77,7 @@ public class TbAccountServiceImpl implements TbAccountService{
         System.out.println(DataSourceBindHolder.getDataSource());
         System.out.println(DataSourceBindHolder.getDataSource());
         System.out.println(DataSourceBindHolder.getDataSource());
+        //sql级别的数据源绑定执行过sql后，数据源回归到方法级别
         tbAccountDao.bindKey("master");
         System.out.println(DataSourceBindHolder.getDataSource());
         System.out.println(DataSourceBindHolder.getDataSource());
@@ -86,6 +88,5 @@ public class TbAccountServiceImpl implements TbAccountService{
     @BindPoint(key = "slave2")
     public void bindDataSource9() throws Exception {
         System.out.println(DataSourceBindHolder.getDataSource());
-        tbAccountDao.insertWithSql(new SQL().insertInto(TbAccount.class,TbAccount::getId,TbAccount::getRealName,TbAccount::getUserName).values(-1,"宁宁","ningning"));
     }
 }
