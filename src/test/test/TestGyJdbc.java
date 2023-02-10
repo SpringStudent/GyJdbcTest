@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.sql.JDBCType;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.chrono.ChronoZonedDateTime;
@@ -303,7 +304,9 @@ public class TestGyJdbc {
 
     @Test
     public void testCreateTable() throws Exception {
-        SQL sql = new SQL().create().table("test_table").temporary().ifNotExists()
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        SQL sql = new SQL().create().table("test_table").ifNotExists()
                 .column().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
                 .column().name("userName").varchar(50).notNull().comment("账号").commit()
                 .column().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
@@ -313,8 +316,6 @@ public class TestGyJdbc {
                 .values(0, "zhouning", "周宁")
                 .values(0, "laoning", "老宁")
                 .values(0, "daning", "大宁");
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         String tbName = tbAccountDao.createWithSql(sql);
         System.out.println(tbAccountDao.queryWithSql(TbAccount.class, new SQL().select("*").from(tbName)).queryList());
         SQL sql2 = new SQL().create().table("test_table2").ifNotExists()
@@ -336,6 +337,17 @@ public class TestGyJdbc {
                 )).as("b").on("a.userName", "b.userName"));
         List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class, sql3).queryList();
         System.out.println(result);
+        SQL sql4 = new SQL().create().table("test4").ifNotExists()
+                .column().name("oid").integer().length(5).comment("叫我主键").commit()
+                .column().name("avatar").jdbcType(JDBCType.BLOB).comment("头像").commit()
+                .column().name("cardnum").clob().length(2).commit()
+                .column().name("str").varchar(15).defaultVal("1").commit()
+                .column().name("agesize").integer().commit()
+                .column().name("ddd").datetime().defaultNull().comment("日历").commit()
+                .column().name("saa").jdbcType(JDBCType.DOUBLE).length(5,2).comment("dd").commit()
+                .index().usingHash().column("ddd").commit()
+                .engine(TableEngine.InnoDB).comment("测试表3").commit();
+        tbAccountDao.createWithSql(sql4);
     }
 
     @Test

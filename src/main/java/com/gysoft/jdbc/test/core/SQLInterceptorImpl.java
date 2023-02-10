@@ -17,6 +17,7 @@ public class SQLInterceptorImpl implements SQLInterceptor {
     @Override
     public void beforeBuild(SQLType sqlType, AbstractCriteria abstractCriteria) throws Exception {
         if (abstractCriteria != null) {
+            System.out.print(sqlType+" ");
             if (sqlType.equals(SQLType.Select)) {
                 abstractCriteria.where("1", 1);
             }
