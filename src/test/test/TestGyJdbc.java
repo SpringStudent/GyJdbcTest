@@ -361,7 +361,8 @@ public class TestGyJdbc {
         }
         sql.values(val);
         long start = System.currentTimeMillis();
-        tbAccountDao.insertWithSql(sql);
+        int size = tbAccountDao.insertWithSql(sql);
+        System.out.println("插入數據量"+size);
         System.out.println("共耗时" + (start - System.currentTimeMillis()) + "耗秒");
     }
 
