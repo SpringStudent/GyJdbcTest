@@ -388,7 +388,7 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         List<TbUser> tbUsers = new ArrayList<>();
 
-        for(int i =0 ;i<1000000;i++){
+        for(int i =0 ;i<1000;i++){
             TbUser tbUser1 = new TbUser();
             tbUser1.setAge(26);
             tbUser1.setBirth(LocalDateToDate(LocalDate.of(1993, 8, 27)));
