@@ -460,6 +460,9 @@ public class TestGyJdbc {
     public void testSQLInterceptor() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         tbAccountDao.insertWithSql(new SQL("wocao").insertInto(TbAccount.class, "userName,realName").values("zhouning","gan"));
+        tbUserDao.updateWithSql(new SQL("updateBirthAuto").update(TbUser.class).and(Where.where("name").like("zhouning")));
+        System.out.println(tbUserDao.queryWithSql(TbUser.class,new SQL("isActive1").select("*").from(TbUser.class)).queryList());
     }
 }

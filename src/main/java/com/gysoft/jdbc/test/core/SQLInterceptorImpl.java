@@ -17,7 +17,11 @@ public class SQLInterceptorImpl implements SQLInterceptor {
 
     @Override
     public void beforeBuild(SQLType sqlType, SqlModifier sqlModifier) throws Exception {
-        System.out.println(sqlModifier.sqlId());
+        if (sqlModifier.sqlId().equals("updateBirthAuto")) {
+            sqlModifier.addUpdate("birth", new Date());
+        } else if (sqlModifier.sqlId().equals("isActive1")) {
+            sqlModifier.addAnd(Where.where("isActive").equal(1));
+        }
     }
 
     @Override
