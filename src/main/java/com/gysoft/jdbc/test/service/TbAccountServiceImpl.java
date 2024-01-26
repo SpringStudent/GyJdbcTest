@@ -1,10 +1,8 @@
 package com.gysoft.jdbc.test.service;
 
-import com.gysoft.jdbc.bean.SQL;
 import com.gysoft.jdbc.multi.*;
 import com.gysoft.jdbc.multi.balance.RandomLoadBalance;
 import com.gysoft.jdbc.test.dao.TbAccountDao;
-import com.gysoft.jdbc.test.pojo.TbAccount;
 import org.springframework.transaction.annotation.Transactional;
 
 /**

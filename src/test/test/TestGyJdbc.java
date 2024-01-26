@@ -12,6 +12,7 @@ import com.gysoft.jdbc.test.pojo.TbUser;
 import com.gysoft.jdbc.test.service.AccountService;
 import com.gysoft.jdbc.test.service.TbAccountService;
 import com.gysoft.jdbc.tools.CustomResultSetExractorFactory;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -141,7 +142,7 @@ public class TestGyJdbc {
                 , TbAccount::getUserName, TbAccount::getRealName).values(102, "halou", "哈喽");
 
         SQL sql13 = new SQL().replaceInto(TbAccount.class).values(100, "gan", "干");
-        SQL sql14 = new SQL().replaceInto(TbAccount.class,"id","userName","realName").values(101, "yyes", "是的老哥");
+        SQL sql14 = new SQL().replaceInto(TbAccount.class, "id", "userName", "realName").values(101, "yyes", "是的老哥");
         SQL sql15 = new SQL().replaceInto(TbAccount.class, TbAccount::getId
                 , TbAccount::getUserName, TbAccount::getRealName).values(102, "hadssadao", "哈斯达根");
 
@@ -344,7 +345,7 @@ public class TestGyJdbc {
                 .column().name("str").varchar(15).defaultVal("1").commit()
                 .column().name("agesize").integer().commit()
                 .column().name("ddd").datetime().defaultNull().comment("日历").commit()
-                .column().name("saa").jdbcType(JDBCType.DOUBLE).length(5,2).comment("dd").commit()
+                .column().name("saa").jdbcType(JDBCType.DOUBLE).length(5, 2).comment("dd").commit()
                 .index().usingHash().column("ddd").commit()
                 .engine(TableEngine.InnoDB).comment("测试表3").commit();
         tbAccountDao.createWithSql(sql4);
@@ -362,7 +363,7 @@ public class TestGyJdbc {
         sql.values(val);
         long start = System.currentTimeMillis();
         int size = tbAccountDao.insertWithSql(sql);
-        System.out.println("插入數據量"+size);
+        System.out.println("插入數據量" + size);
         System.out.println("共耗时" + (start - System.currentTimeMillis()) + "耗秒");
     }
 
@@ -371,15 +372,13 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         List<TbAccount> result = new ArrayList<>();
-        for (int i = 0; i < 50000; i++) {
+        for (int i = 0; i < 1000; i++) {
             TbAccount tbAccount = new TbAccount();
-            tbAccount.setRealName("周宁"+i);
-            tbAccount.setUserName("user"+i);
+            tbAccount.setRealName(RandomStringUtils.randomAscii(10));
+            tbAccount.setUserName(RandomStringUtils.randomAlphanumeric(10));
             result.add(tbAccount);
         }
-        long start = System.currentTimeMillis();
-        System.out.println(tbAccountDao.saveAll(result));
-        System.out.println("共耗时" + (start - System.currentTimeMillis()) + "耗秒");
+        tbAccountDao.saveAll(result);
     }
 
     @Test
@@ -388,15 +387,15 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         List<TbUser> tbUsers = new ArrayList<>();
 
-        for(int i =0 ;i<1000;i++){
+        for (int i = 0; i < 1000; i++) {
             TbUser tbUser1 = new TbUser();
             tbUser1.setAge(26);
             tbUser1.setBirth(LocalDateToDate(LocalDate.of(1993, 8, 27)));
             tbUser1.setCareer("Java");
             tbUser1.setEmail("22888@qq.com");
-            tbUser1.setMobile(i+"");
-            tbUser1.setName("zhouning"+i);
-            tbUser1.setRealName("周宁"+i);
+            tbUser1.setMobile(i + "");
+            tbUser1.setName("zhouning" + i);
+            tbUser1.setRealName("周宁" + i);
             tbUser1.setPwd("123456");
             tbUser1.setIsActive(0);
             tbUser1.setRoleId(1);
@@ -455,5 +454,14 @@ public class TestGyJdbc {
         accountService.bindDataSource();
         accountService.bindDataSource2();
         accountService.bindDataSource2();
+    }
+
+    @Test
+    public void testSQLInterceptor() throws Exception {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
+        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
+        TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
+        tbAccountDao.insertWithSql(new SQL().insertInto(TbAccount.class, "userName").values("zhouning"));
+        tbUserDao.updateWithSql(new SQL().update(TbUser.class).like(TbUser::getName, "zhouning"));
     }
 }
