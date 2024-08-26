@@ -356,6 +356,7 @@ public class TestGyJdbc {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         System.out.println(tbAccountDao.existsWithSql(new SQL().select("*").from(TbAccount.class).where("id",1)));
+        System.out.println(tbAccountDao.existsWithCriteria(new Criteria().where("id",1)));
         TbAccount tbAccount = new TbAccount();
         tbAccount.setId(1);
         tbAccount.setUserName("ning");
@@ -368,6 +369,7 @@ public class TestGyJdbc {
         tbAccount2.setRealName("周");
         tbAccountDao.saveOrUpdate(tbAccount2);
         System.out.println(tbAccountDao.existsWithSql(new SQL().select("*").from(TbAccount.class).where("id",1)));
+        System.out.println(tbAccountDao.existsWithCriteria(new Criteria().where("id",1)));
     }
 
     @Test
