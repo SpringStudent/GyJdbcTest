@@ -181,6 +181,7 @@ public class TestGyJdbc {
         //根据用户名查询:SELECT * FROM tb_user where name = 'zhouning'
         TbUser tbUser = tbUserDao.queryOne(new Criteria().where(TbUser::getName, "zhouning").andIfAbsent(TbUser::getName, null));
         System.out.println("queryOne:" + tbUser);
+
         //根据用户名批量查询:SELECT * FROM tb_user where name in('zhouning','yinhw');
         List<TbUser> tbUsers = tbUserDao.queryWithCriteria(new Criteria().in(TbUser::getName, Arrays.asList("zhouning", "hxf")));
         System.out.println("queryWithCriteria:" + tbUsers);
@@ -387,7 +388,7 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         List<TbUser> tbUsers = new ArrayList<>();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000000; i++) {
             TbUser tbUser1 = new TbUser();
             tbUser1.setAge(26);
             tbUser1.setBirth(LocalDateToDate(LocalDate.of(1993, 8, 27)));

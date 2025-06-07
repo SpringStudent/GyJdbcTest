@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.springstudent</groupId>
             <artifactId>GyJdbc</artifactId>
-            <version>1.4.0.RELEASE</version>
+            <version>1.4.2.RELEASE</version>
         </dependency>
         <!-- sping -->
         <dependency>
@@ -115,19 +115,8 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.10</version>
-            <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>io.github.java-diff-utils</groupId>
-            <artifactId>java-diff-utils</artifactId>
-            <version>4.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cysk.inspection</groupId>
-            <artifactId>patrol-inspection-server</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

@@ -24,4 +24,5 @@ public class AccountService {
         System.out.println("common query" + tbAccountDao.queryAll());
         System.out.println("common query" + tbAccountDao.queryAll());
     }
+
 }
