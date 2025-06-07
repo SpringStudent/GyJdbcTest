@@ -1,7 +1,5 @@
-1.新建数据库test导入tb_user.sql、tb_role.sql、tb_account.sql、tb_drop.sql数据库
+1.新建数据库test1、test2、test3,分别将test1.sql、test2.sql、test3.sql导入三个库
 
-2.新建test2、test3数据库分别导入tb_account.sql到数据库（该步骤用于测试gyjdbc的多数据源能力）
+2.修改dataSource.properties
 
-3.修改dataSource.properties
-
-4.按顺序运行TestGyJdbc各个方法
+3.按顺序运行TestGyJdbc各个方法
