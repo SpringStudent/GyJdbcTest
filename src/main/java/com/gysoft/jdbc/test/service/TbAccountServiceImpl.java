@@ -1,6 +1,7 @@
 package com.gysoft.jdbc.test.service;
 
 import com.gysoft.jdbc.multi.*;
+import com.gysoft.jdbc.multi.balance.LeastActiveLoadBalance;
 import com.gysoft.jdbc.multi.balance.RandomLoadBalance;
 import com.gysoft.jdbc.test.dao.TbAccountDao;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,5 +87,13 @@ public class TbAccountServiceImpl implements TbAccountService {
     @BindPoint(key = "slave2")
     public void bindDataSource9() throws Exception {
         System.out.println("bindDataSource9:"+DataSourceBindHolder.getDataSource());
+    }
+
+    @Override
+    @BindPoint(group = "slaveGroup", loadBalance = LeastActiveLoadBalance.class)
+    public void bindDataSource10() throws Exception {
+        System.out.println("bindDataSource10:"+DataSourceBindHolder.getDataSource());
+        tbAccountDao.bindGroup("slaveGroup",LeastActiveLoadBalance.class);
+        System.out.println("bindDataSource10:"+DataSourceBindHolder.getDataSource());
     }
 }
