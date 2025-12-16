@@ -93,6 +93,8 @@ public class TbAccountServiceImpl implements TbAccountService {
     @BindPoint(group = "slaveGroup", loadBalance = LeastActiveLoadBalance.class)
     public void bindDataSource10() throws Exception {
         System.out.println("bindDataSource10:"+DataSourceBindHolder.getDataSource());
+        tbAccountDao.bindKey("slave");
+        System.out.println("bindDataSource10:"+DataSourceBindHolder.getDataSource());
         tbAccountDao.bindGroup("slaveGroup",LeastActiveLoadBalance.class);
         System.out.println("bindDataSource10:"+DataSourceBindHolder.getDataSource());
     }
