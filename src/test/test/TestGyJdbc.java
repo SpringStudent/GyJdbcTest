@@ -168,7 +168,7 @@ public class TestGyJdbc {
     public void testQuery() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
-        List<TbUser> result1 = tbUserDao.queryAll();
+        List<TbUser> result1 = tbUserDao.queryWithCriteria(new Criteria().limit(1));
         TbUser result2 = tbUserDao.queryOne(result1.get(0).getId());
         System.out.println("queryAll():" + result1);
         System.out.println("queryOne:" + result2);
@@ -279,6 +279,8 @@ public class TestGyJdbc {
                 .in("t3.career", Arrays.asList("JAVA"));
         List<UserRole> userRoles2 = tbUserDao.queryWithSql(UserRole.class, sql8).queryList();
         System.out.println(userRoles2);
+        SQL sql9 = new SQL().select("*").from(TbUser.class);
+        System.out.println(tbUserDao.bindKey("slave2").queryWithSql(TbUser.class, sql9).queryList());
     }
 
 
@@ -310,11 +312,11 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().create().table("test_table").ifNotExists()
                 .column().name("id").integer().notNull().autoIncrement().primary().comment("主键").commit()
-                .column().name("userName").varchar(50).notNull().comment("账号").commit()
+                .column().name("`userName`").varchar(50).notNull().comment("账号").commit()
                 .column().name("realName").varchar(50).defaultNull().comment("真实名称").commit()
                 .index().column("userName").name("ix_userName").unique().usingBtree().comment("用户名索引").commit()
-                .index().column("userName", "realName").name("ix_userName_realName").usingHash().comment("这是一个联合索引").commit()
-                .engine(TableEngine.MyISAM).comment("账号表2").commit()
+                .index().column("`userName`", "realName").usingHash().comment("这是一个联合索引").commit()
+                .engine(TableEnum.Engine.MyISAM).utf8().rowFormat(TableEnum.RowFormat.FIXED).autoIncrement(100).comment("账号表2").commit()
                 .values(0, "zhouning", "周宁")
                 .values(0, "laoning", "老宁")
                 .values(0, "daning", "大宁");
@@ -325,7 +327,7 @@ public class TestGyJdbc {
                 .column().name("name").varchar(100).notNull().commit()
                 .column().name("birth").datetime().defaultNull().commit()
                 .index().column("name").comment("嘿嘿").commit()
-                .engine(TableEngine.MyISAM).comment("测试表2").commit()
+                .engine(TableEnum.Engine.MyISAM).comment("测试表2").commit()
                 .select(new ValueReference(0), "realName", "birth").from("tb_user");
         tbAccountDao.createWithSql(sql2);
         SQL sql3 = new SQL().select("a.*").from(TbAccount.class).as("a")
@@ -334,7 +336,7 @@ public class TestGyJdbc {
                                 .column().name("id").varchar(32).primary().notNull().commit()
                                 .column().name("userName").varchar(50).notNull().commit()
                                 .index().unique().name("ix_userName").column("userName").commit()
-                                .engine(TableEngine.MyISAM).comment("用户临时表").commit()
+                                .engine(TableEnum.Engine.MyISAM).comment("用户临时表").commit()
                                 .select("id", "name").from(TbUser.class)
                 )).as("b").on("a.userName", "b.userName"));
         List<TbAccount> result = tbAccountDao.queryWithSql(TbAccount.class, sql3).queryList();
@@ -348,16 +350,26 @@ public class TestGyJdbc {
                 .column().name("ddd").datetime().defaultNull().comment("日历").commit()
                 .column().name("saa").jdbcType(JDBCType.DOUBLE).length(5, 2).comment("dd").commit()
                 .index().usingHash().column("ddd").commit()
-                .engine(TableEngine.InnoDB).comment("测试表3").commit();
+                .engine(TableEnum.Engine.InnoDB).comment("测试表3").commit();
         tbAccountDao.createWithSql(sql4);
+
+        SQL sql5 = new SQL().create().table("test5").ifNotExists()
+                .column(c -> c.name("id").integer().notNull().autoIncrement().primary().comment("主键"))
+                .column(c -> c.name("userName").varchar(50).notNull().comment("账号"))
+                .column(c -> c.name("realName").varchar(50).defaultNull().comment("真实名称"))
+                .column(c -> c.name("created_at").datetime().notNull().comment("创建时间"))
+                .column(c -> c.name("updated_at").datetime(3).notNull().comment("更新时间"))
+                .index(i -> i.column("userName").name("ix_userName").unique().usingBtree().comment("用户名索引"))
+                .engine(TableEnum.Engine.InnoDB).latin1().rowFormat(TableEnum.RowFormat.DYNAMIC).comment("账号表2").commit();
+        tbAccountDao.createWithSql(sql5);
     }
 
     @Test
     public void testSaveOrUpdate() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        System.out.println(tbAccountDao.existsWithSql(new SQL().select("*").from(TbAccount.class).where("id",1)));
-        System.out.println(tbAccountDao.existsWithCriteria(new Criteria().where("id",1)));
+        System.out.println(tbAccountDao.existsWithSql(new SQL().select("*").from(TbAccount.class).where("id", 1)));
+        System.out.println(tbAccountDao.existsWithCriteria(new Criteria().where("id", 1)));
         TbAccount tbAccount = new TbAccount();
         tbAccount.setId(1);
         tbAccount.setUserName("ning");
@@ -369,8 +381,8 @@ public class TestGyJdbc {
         tbAccount2.setUserName("zhou");
         tbAccount2.setRealName("周");
         tbAccountDao.saveOrUpdate(tbAccount2);
-        System.out.println(tbAccountDao.existsWithSql(new SQL().select("*").from(TbAccount.class).where("id",1)));
-        System.out.println(tbAccountDao.existsWithCriteria(new Criteria().where("id",1)));
+        System.out.println(tbAccountDao.existsWithSql(new SQL().select("*").from(TbAccount.class).where("id", 1)));
+        System.out.println(tbAccountDao.existsWithCriteria(new Criteria().where("id", 1)));
     }
 
     @Test
@@ -379,7 +391,7 @@ public class TestGyJdbc {
         TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
         SQL sql = new SQL().insertInto(TbAccount.class, "userName", "realName");
         List<Object[]> val = new ArrayList<>();
-        for (int i = 0; i < 50000; i++) {
+        for (int i = 0; i < 2000; i++) {
             val.add(new Object[]{"user" + i, "周" + i});
         }
         sql.values(val);
@@ -409,7 +421,7 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         List<TbUser> tbUsers = new ArrayList<>();
 
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < 1000; i++) {
             TbUser tbUser1 = new TbUser();
             tbUser1.setAge(26);
             tbUser1.setBirth(LocalDateToDate(LocalDate.of(1993, 8, 27)));
@@ -478,14 +490,5 @@ public class TestGyJdbc {
         accountService.bindDataSource2();
         accountService.bindDataSource2();
     }
-
-    @Test
-    public void testSQLInterceptor() throws Exception {
-        ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
-        TbAccountDao tbAccountDao = (TbAccountDao) ac.getBean("tbAccountDao");
-        TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
-        tbAccountDao.insertWithSql(new SQL("wocao").insertInto(TbAccount.class, "userName,realName").values("zhouning","gan"));
-        tbUserDao.updateWithSql(new SQL("updateBirthAuto").update(TbUser.class).and(Where.where("name").like("zhouning")));
-        System.out.println(tbUserDao.queryWithSql(TbUser.class,new SQL("isActive1").select("*").from(TbUser.class)).queryList());
-    }
 }
+
