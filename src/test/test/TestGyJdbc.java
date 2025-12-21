@@ -350,7 +350,7 @@ public class TestGyJdbc {
                 .column().name("ddd").datetime().defaultNull().comment("日历").commit()
                 .column().name("saa").jdbcType(JDBCType.DOUBLE).length(5, 2).comment("dd").commit()
                 .index().usingHash().column("ddd").commit()
-                .engine(TableEnum.Engine.InnoDB).comment("测试表3").commit();
+                .engine(TableEnum.Engine.InnoDB).rowFormat(TableEnum.RowFormat.COMPRESSED).comment("测试表3").commit();
         tbAccountDao.createWithSql(sql4);
 
         SQL sql5 = new SQL().create().table("test5").ifNotExists()
