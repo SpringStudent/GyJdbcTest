@@ -118,6 +118,11 @@ public class TestGyJdbc {
         SQL sql = new SQL().insertInto(TbAccount.class, "userName", "realName")
                 .values("test", "测试")
                 .values("test2", "测试2");
+        List<Object[]> vals = new ArrayList<>();
+        for(int i = 3;i<2100;i++){
+            vals.add(new Object[]{"user"+i,"用户"+i});
+        }
+        sql.values(vals);
         SQL sql2 = new SQL().insertInto(TbAccount.class, "userName", "realName")
                 .select("name", "realName").from(TbUser.class);
         SQL sql3 = new SQL().insertInto(TbAccount.class, TbAccount::getUserName, TbAccount::getRealName)
@@ -281,6 +286,8 @@ public class TestGyJdbc {
         System.out.println(userRoles2);
         SQL sql9 = new SQL().select("*").from(TbUser.class);
         System.out.println(tbUserDao.bindKey("slave2").queryWithSql(TbUser.class, sql9).queryList());
+        SQL sql10 = new SQL().select("*").from(TbUser.class).and(Where.where(TbUser::getName).isNotNull().and(TbUser::getEmail).isNotNull());
+        System.out.println(tbUserDao.queryWithSql(TbUser.class, sql10).queryList());
     }
 
 
