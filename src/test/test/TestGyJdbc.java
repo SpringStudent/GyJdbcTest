@@ -118,11 +118,6 @@ public class TestGyJdbc {
         SQL sql = new SQL().insertInto(TbAccount.class, "userName", "realName")
                 .values("test", "测试")
                 .values("test2", "测试2");
-        List<Object[]> vals = new ArrayList<>();
-        for(int i = 3;i<2100;i++){
-            vals.add(new Object[]{"user"+i,"用户"+i});
-        }
-        sql.values(vals);
         SQL sql2 = new SQL().insertInto(TbAccount.class, "userName", "realName")
                 .select("name", "realName").from(TbUser.class);
         SQL sql3 = new SQL().insertInto(TbAccount.class, TbAccount::getUserName, TbAccount::getRealName)
