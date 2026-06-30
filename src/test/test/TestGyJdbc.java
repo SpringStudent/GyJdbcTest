@@ -12,6 +12,7 @@ import com.gysoft.jdbc.test.pojo.TbUser;
 import com.gysoft.jdbc.test.service.AccountService;
 import com.gysoft.jdbc.test.service.TbAccountService;
 import com.gysoft.jdbc.tools.CustomResultSetExractorFactory;
+import com.gysoft.jdbc.tools.SqlMakeTools;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -397,7 +398,6 @@ public class TestGyJdbc {
                 .comment("复杂测试表")
                 .commit();
         tbAccountDao.createWithSql(sql6);
-
         SQL sql7 = new SQL().create().table("test_lambda").ifNotExists()
                 .column(c -> c.name("id").integer().notNull().autoIncrement().primary().comment("主键"))
                 .column(c -> c.name("user_name").varchar(50).notNull().comment("用户名"))
