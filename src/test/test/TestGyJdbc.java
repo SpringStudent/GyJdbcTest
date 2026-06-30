@@ -273,9 +273,9 @@ public class TestGyJdbc {
         // UNION
         //(SELECT t3.name,t3.realName,t4.id,t4.roleName FROM tb_user t3 LEFT JOIN tb_role t4  ON t3.roleId = t4.id  WHERE t3.career IN('JAVA'))
         SQL sql8 = new SQL().select("t1.name,t1.realName,t2.id as roleId,t2.roleName").from(TbUser.class)
-                .as("t1").leftJoin(new Joins().with(TbRole.class).as("t2").on("t1.roleId", "t2.id"))
+                .as("t1").leftJoin(Joins.joinWith(TbRole.class).as("t2").on("t1.roleId", "t2.id"))
                 .where("t1.age", ">", 24).union().select("t3.name,t3.realName,t4.id,t4.roleName").from(TbUser.class)
-                .as("t3").leftJoin(new Joins().with(TbRole.class).as("t4").on("t3.roleId", "t4.id"))
+                .as("t3").leftJoin(TbRole.class,"t4",c->c.on("t3.roleId", "t4.id"))
                 .in("t3.career", Arrays.asList("JAVA"));
         List<UserRole> userRoles2 = tbUserDao.queryWithSql(UserRole.class, sql8).queryList();
         System.out.println(userRoles2);
@@ -364,6 +364,53 @@ public class TestGyJdbc {
                 .index(i -> i.column("userName").name("ix_userName").unique().usingBtree().comment("用户名索引"))
                 .engine(TableEnum.Engine.InnoDB).latin1().rowFormat(TableEnum.RowFormat.DYNAMIC).comment("账号表2").commit();
         tbAccountDao.createWithSql(sql5);
+
+        SQL sql6 = new SQL().create().table("test_complex").ifNotExists()
+                // 各种列类型 + 约束
+                .column().name("id").integer().length(8).notNull().autoIncrement().primary().comment("主键ID").commit()
+                .column().name("tiny").tinyint().length(2).notNull().defaultVal("0").commit()
+                .column().name("nick").varchar(64).notNull().comment("昵称").commit()
+                .column().name("email").varchar(128).defaultNull().commit()
+                .column().name("score").jdbcType(JDBCType.DECIMAL).length(10, 2).defaultVal("0.00").commit()
+                .column().name("ratio").jdbcType(JDBCType.DOUBLE).length(12, 4).notNull().commit()
+                .column().name("amount").jdbcType(JDBCType.DOUBLE).length(10, 2).commit()
+                .column().name("is_active").jdbcType(JDBCType.BOOLEAN).notNull().defaultVal("1").commit()
+                .column().name("birthday").jdbcType(JDBCType.DATE).defaultNull().comment("生日").commit()
+                .column().name("login_at").datetime(3).defaultVal("CURRENT_TIMESTAMP(3)").commit()
+                .column().name("updated_at").datetime().notNull().defaultCurrentTimestamp().commit()
+                .column().name("avatar").jdbcType(JDBCType.BLOB).comment("头像数据").commit()
+                .column().name("memo").clob().defaultNull().commit()
+                .column().name("age").tinyint().length(6).notNull().commit()
+                .column().name("grade").jdbcType(JDBCType.CHAR).length(1).defaultVal("A").commit()
+                .column().name("json_data").jdbcType(JDBCType.OTHER).defaultNull().commit()
+                .column().name("status_code").integer().length(3).defaultVal("1").notNull().commit()
+                // 多种索引
+                .index().unique().name("uk_nick").column("nick").usingBtree().comment("昵称唯一索引").commit()
+                .index().column("email").usingHash().comment("邮箱hash索引").commit()
+                .index().name("ix_score_amount").column("score").column("amount").usingBtree().commit()
+                .index().unique().column("is_active").usingBtree().comment("活跃用户索引").commit()
+                // 表级元数据
+                .engine(TableEnum.Engine.InnoDB)
+                .utf8()
+                .rowFormat(TableEnum.RowFormat.DYNAMIC)
+                .autoIncrement(1000)
+                .comment("复杂测试表")
+                .commit();
+        tbAccountDao.createWithSql(sql6);
+
+        SQL sql7 = new SQL().create().table("test_lambda").ifNotExists()
+                .column(c -> c.name("id").integer().notNull().autoIncrement().primary().comment("主键"))
+                .column(c -> c.name("user_name").varchar(50).notNull().comment("用户名"))
+                .column(c -> c.name("real_name").varchar(50).defaultNull().comment("真实姓名"))
+                .column(c -> c.name("created_at").datetime(3).notNull().defaultVal("CURRENT_TIMESTAMP(3)"))
+                .column(c -> c.name("updated_at").datetime(3).notNull().defaultVal("CURRENT_TIMESTAMP(3)"))
+                .column(c -> c.name("score").jdbcType(JDBCType.DECIMAL).length(10, 2).defaultVal("0.00"))
+                .column(c -> c.name("is_admin").jdbcType(JDBCType.BOOLEAN).notNull().defaultVal("0"))
+                .column(c -> c.name("profile").jdbcType(JDBCType.OTHER).defaultNull().comment("用户配置"))
+                .index(i -> i.unique().name("uk_username").column("user_name").usingBtree().comment("用户名唯一索引"))
+                .index(i -> i.column("created_at").usingHash())
+                .engine(TableEnum.Engine.InnoDB).utf8().comment("Lambda API测试表").commit();
+        tbAccountDao.createWithSql(sql7);
     }
 
     @Test
