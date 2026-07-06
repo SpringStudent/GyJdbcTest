@@ -17,8 +17,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.JDBCType;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.chrono.ChronoZonedDateTime;
@@ -177,11 +181,22 @@ public class TestGyJdbc {
 
     @Test
     public void testQueryWithCriteria() throws Exception {
+        RowMapper<UserPo> userPoBeanPropertyRowMapper = (resultSet, i) -> {
+
+            UserPo po = new UserPo();
+            po.setUserName(resultSet.getString("name"));
+            po.setNickName(resultSet.getString("realName"));
+            po.setPwd(resultSet.getString("pwd"));
+            // ... 其他字段根据实际表结构补充
+            return po;
+        };
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         //根据用户名查询:SELECT * FROM tb_user where name = 'zhouning'
         TbUser tbUser = tbUserDao.queryOne(new Criteria().where(TbUser::getName, "zhouning").andIfAbsent(TbUser::getName, null));
         System.out.println("queryOne:" + tbUser);
+        UserPo userPo = tbUserDao.queryOne(new Criteria().where(TbUser::getName, "zhouning"), userPoBeanPropertyRowMapper);
+        System.out.println(userPo);
 
         //根据用户名批量查询:SELECT * FROM tb_user where name in('zhouning','yinhw');
         List<TbUser> tbUsers = tbUserDao.queryWithCriteria(new Criteria().in(TbUser::getName, Arrays.asList("zhouning", "hxf")));
@@ -197,12 +212,16 @@ public class TestGyJdbc {
         //分页查询:SELECT * FROM tb_user LIMIT 0,2
         PageResult<TbUser> pageResult = tbUserDao.pageQuery(new Page(1, 2));
         System.out.println("pageQuery:" + pageResult);
+        PageResult<UserPo> pageResultUserPo = tbUserDao.pageQuery(new Page(1, 2),userPoBeanPropertyRowMapper);
+        System.out.println("pageQuery userPo:" + pageResultUserPo);
         //分页条件查询:SELECT * FROM tb_user WHERE age < 28 LIMIT 0,2
         PageResult<TbUser> pageResult2 = tbUserDao.pageQueryWithCriteria(new Page(1, 2), new Criteria().lt(TbUser::getAge, 28).orderBy(new Sort(TbUser::getAge)));
         System.out.println("pageQueryWithCriteria:" + pageResult2);
         //按年龄降序查询用户:SELECT * FROM tb_user ORDER BY age DESC
         List<TbUser> tbUsers4 = tbUserDao.queryWithCriteria(new Criteria().orderBy(new Sort(TbUser::getAge)));
         System.out.println("queryWithCriteria:" + tbUsers4);
+        List<UserPo> userPos = tbUserDao.queryWithCriteria(new Criteria().orderBy(new Sort(TbUser::getAge)),userPoBeanPropertyRowMapper);
+        System.out.println("queryWithCriteria userPo:" + userPos);
     }
 
     @Test
@@ -260,7 +279,7 @@ public class TestGyJdbc {
         System.out.println("queryWithSql" + careers);
         //SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user t1 LEFT JOIN tb_role t2  ON t1.roleId = t2.id  WHERE t1.age > ?
         SQL sql6 = new SQL().select("t1.name,t1.realName,t2.id as roleId,t2.roleName").from(TbUser.class)
-                .as("t1").leftJoin(new Joins().with(TbRole.class).as("t2").on("t1.roleId", "t2.id"))
+                .as("t1").leftJoin(TbRole.class, "t2", c -> c.on("t1.roleId", "t2.id"))
                 .where("t1.age", ">", 24);
         List<UserRole> userRoles = tbUserDao.queryWithSql(UserRole.class, sql6).queryList();
         System.out.println("queryWithSql:" + userRoles);
@@ -276,7 +295,7 @@ public class TestGyJdbc {
         SQL sql8 = new SQL().select("t1.name,t1.realName,t2.id as roleId,t2.roleName").from(TbUser.class)
                 .as("t1").leftJoin(Joins.joinWith(TbRole.class).as("t2").on("t1.roleId", "t2.id"))
                 .where("t1.age", ">", 24).union().select("t3.name,t3.realName,t4.id,t4.roleName").from(TbUser.class)
-                .as("t3").leftJoin(TbRole.class,"t4",c->c.on("t3.roleId", "t4.id"))
+                .as("t3").leftJoin(TbRole.class, "t4", c -> c.on("t3.roleId", "t4.id"))
                 .in("t3.career", Arrays.asList("JAVA"));
         List<UserRole> userRoles2 = tbUserDao.queryWithSql(UserRole.class, sql8).queryList();
         System.out.println(userRoles2);
@@ -407,6 +426,7 @@ public class TestGyJdbc {
                 .column(c -> c.name("score").jdbcType(JDBCType.DECIMAL).length(10, 2).defaultVal("0.00"))
                 .column(c -> c.name("is_admin").jdbcType(JDBCType.BOOLEAN).notNull().defaultVal("0"))
                 .column(c -> c.name("profile").jdbcType(JDBCType.OTHER).defaultNull().comment("用户配置"))
+                .column(c -> c.name("extraData").json().defaultNull().comment("额外数据"))
                 .index(i -> i.unique().name("uk_username").column("user_name").usingBtree().comment("用户名唯一索引"))
                 .index(i -> i.column("created_at").usingHash())
                 .engine(TableEnum.Engine.InnoDB).utf8().comment("Lambda API测试表").commit();
