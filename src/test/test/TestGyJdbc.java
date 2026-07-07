@@ -12,6 +12,7 @@ import com.gysoft.jdbc.test.pojo.TbUser;
 import com.gysoft.jdbc.test.service.AccountService;
 import com.gysoft.jdbc.test.service.TbAccountService;
 import com.gysoft.jdbc.tools.CustomResultSetExractorFactory;
+import com.gysoft.jdbc.tools.EntityTools;
 import com.gysoft.jdbc.tools.SqlMakeTools;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
@@ -115,7 +116,6 @@ public class TestGyJdbc {
         tbUsers.add(tbUser5);
         System.out.println(tbUserDao.saveAll(tbUsers));
     }
-
     @Test
     public void testInsertWithSql() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("applicationContext.xml");
@@ -222,6 +222,12 @@ public class TestGyJdbc {
         System.out.println("queryWithCriteria:" + tbUsers4);
         List<UserPo> userPos = tbUserDao.queryWithCriteria(new Criteria().orderBy(new Sort(TbUser::getAge)),userPoBeanPropertyRowMapper);
         System.out.println("queryWithCriteria userPo:" + userPos);
+        List<String> ids = tbUserDao.queryIds(new Criteria().where(TbUser::getName, "zhouning"));
+        System.out.println(ids);
+        long allCount = tbUserDao.countWithCriteria(null);
+        System.out.println(allCount);
+        long criteriaCount = tbUserDao.countWithCriteria(new Criteria().in(TbUser::getName, Arrays.asList("zhouning", "hxf")));
+        System.out.println(criteriaCount);
     }
 
     @Test
@@ -258,11 +264,13 @@ public class TestGyJdbc {
                 .from(TbUser.class).where(TbUser::getIsActive, 1);
         List<SimpleUser> simpleUsers = tbUserDao.queryWithSql(SimpleUser.class, sql).queryList();
         System.out.println("queryWithSql:" + simpleUsers);
+        System.out.println("queryWithSql:" +  tbUserDao.queryListWithSql(SimpleUser.class, sql));
         //SELECT name, email, realName, mobile FROM tb_user WHERE isActive = 1 limit 0,2
         SQL sql2 = new SQL().select(TbUser::getName, TbUser::getEmail, TbUser::getRealName, TbUser::getMobile)
                 .from(TbUser.class).where(TbUser::getIsActive, 1);
         PageResult<SimpleUser> simpleUsers2 = tbUserDao.queryWithSql(SimpleUser.class, sql2).pageQuery(new Page(1, 2));
         System.out.println("queryWithSql:" + simpleUsers2);
+        System.out.println("queryWithSql:" + tbUserDao.pageQueryWithSql(new Page(1, 2),SimpleUser.class, sql2));
         //SELECT count(id) from tb_user
         SQL sql3 = new SQL().select(count(TbUser::getId)).from(TbUser.class);
         Integer count = tbUserDao.queryIntegerWithSql(sql3);
@@ -303,6 +311,10 @@ public class TestGyJdbc {
         System.out.println(tbUserDao.bindKey("slave2").queryWithSql(TbUser.class, sql9).queryList());
         SQL sql10 = new SQL().select("*").from(TbUser.class).and(Where.where(TbUser::getName).isNotNull().and(TbUser::getEmail).isNotNull());
         System.out.println(tbUserDao.queryWithSql(TbUser.class, sql10).queryList());
+        SQL sql11 = new SQL().select(count("id")).from(TbUser.class).where("age", ">", 26);
+        System.out.println(tbUserDao.countWithSql(sql11));
+        SQL sql12 = new SQL().select(count("id")).from(TbUser.class);
+        System.out.println(tbUserDao.countWithSql(sql12));
     }
 
 
