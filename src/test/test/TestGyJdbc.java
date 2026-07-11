@@ -12,18 +12,13 @@ import com.gysoft.jdbc.test.pojo.TbUser;
 import com.gysoft.jdbc.test.service.AccountService;
 import com.gysoft.jdbc.test.service.TbAccountService;
 import com.gysoft.jdbc.tools.CustomResultSetExractorFactory;
-import com.gysoft.jdbc.tools.EntityTools;
-import com.gysoft.jdbc.tools.SqlMakeTools;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.JDBCType;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.chrono.ChronoZonedDateTime;
@@ -236,7 +231,7 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         //更新一个用户
         TbUser tbUser = tbUserDao.queryOne(new Criteria().and(TbUser::getName, "zhouning"));
-        tbUser.setRealName("周宁宁");
+        tbUser.setRealName("阿宁");
         tbUser.setEmail("2267431887@qq.com");
         tbUserDao.update(tbUser);
         //更新全部用户
@@ -502,7 +497,7 @@ public class TestGyJdbc {
         TbUserDao tbUserDao = (TbUserDao) ac.getBean("tbUserDao");
         List<TbUser> tbUsers = new ArrayList<>();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 3001; i++) {
             TbUser tbUser1 = new TbUser();
             tbUser1.setAge(26);
             tbUser1.setBirth(LocalDateToDate(LocalDate.of(1993, 8, 27)));
