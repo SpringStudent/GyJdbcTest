@@ -11,7 +11,6 @@ import com.gysoft.jdbc.test.pojo.TbRole;
 import com.gysoft.jdbc.test.pojo.TbUser;
 import com.gysoft.jdbc.test.service.AccountService;
 import com.gysoft.jdbc.test.service.TbAccountService;
-import com.gysoft.jdbc.tools.CustomResultSetExractorFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -274,7 +273,7 @@ public class TestGyJdbc {
         System.out.println("queryWithSql:" + count2);
         //SELECT age, COUNT(age) AS num FROM tb_user GROUP BY age ORDER BY age DESC
         SQL sql4 = new SQL().select("age", countAs("age").as("num")).from(TbUser.class).orderBy(new Sort(TbUser::getAge)).groupBy(TbUser::getAge);
-        Map<Integer, Integer> map = tbUserDao.queryMapWithSql(sql4, CustomResultSetExractorFactory.createDoubleColumnValueResultSetExractor());
+        Map<Integer, Integer> map = tbUserDao.queryMapWithSql(sql4, ResultSetExractorFactory.createDoubleColumnValueResultSetExtractor(Integer.class,Integer.class));
         System.out.println("queryMapWithSql:" + map);
         //SELECT DISTINCT(career) FROM tb_user
         SQL sql5 = new SQL().select(distinct(TbUser::getCareer)).from(TbUser.class);
