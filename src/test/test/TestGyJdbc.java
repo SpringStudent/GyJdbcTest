@@ -302,7 +302,7 @@ public class TestGyJdbc {
         List<UserRole> userRoles2 = tbUserDao.queryWithSql(UserRole.class, sql8).queryList();
         System.out.println(userRoles2);
         SQL sql9 = new SQL().select("*").from(TbUser.class);
-        System.out.println(tbUserDao.bindKey("slave2").queryWithSql(TbUser.class, sql9).queryList());
+        System.out.println(tbUserDao.queryWithSql(TbUser.class, sql9).queryList());
         SQL sql10 = new SQL().select("*").from(TbUser.class).and(Where.where(TbUser::getName).isNotNull().and(TbUser::getEmail).isNotNull());
         System.out.println(tbUserDao.queryWithSql(TbUser.class, sql10).queryList());
         SQL sql11 = new SQL().select(count("id")).from(TbUser.class).where("age", ">", 26);

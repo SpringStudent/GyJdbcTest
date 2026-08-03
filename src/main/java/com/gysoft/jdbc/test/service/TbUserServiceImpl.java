@@ -25,7 +25,6 @@ public class TbUserServiceImpl implements TbUserService {
     @Override
     public void test() throws Exception {
         //SELECT * FROM tb_user where name in('zhouning','yinhw');
-        List<TbUser> tbUsers = tbUserDao.bindKey("slave").queryWithCriteria(new Criteria().in(TbUser::getName, Arrays.asList("zhouning", "yinhw")));
         //SELECT name, email, realName, mobile FROM tb_user WHERE isActive = 1
         SQL sql = new SQL().select(TbUser::getName, TbUser::getEmail, TbUser::getRealName, TbUser::getMobile)
                 .from(TbUser.class).where(TbUser::getIsActive, 1);
@@ -39,7 +38,6 @@ public class TbUserServiceImpl implements TbUserService {
         Integer count = tbUserDao.queryIntegerWithSql(sql3);
 
         //UPDATE tb_user set realName = "元林",email = "13888888888@163.com" WHERE name = "Smith"
-        tbUserDao.bindGroup("masterGroup").updateWithSql(new SQL().update(TbUser.class).set(TbUser::getRealName, "元林").set(TbUser::getEmail, "13888888888@163.com").where(TbUser::getName, "Smith"));
         TbUser tbUser = new TbUser();
         tbUserDao.update(tbUser);
 

@@ -68,7 +68,6 @@ public class TbAccountServiceImpl implements TbAccountService {
     @Override
     public void bindDataSource7() throws Exception {
         System.out.println("bindDataSource7:"+jdbcRoutingDataSource.determineCurrentLookupKey());
-        tbAccountDao.bindGroup("slaveGroup");
         System.out.println("bindDataSource7:"+jdbcRoutingDataSource.determineCurrentLookupKey());
         System.out.println("bindDataSource7:"+jdbcRoutingDataSource.determineCurrentLookupKey());
         System.out.println("bindDataSource7:"+jdbcRoutingDataSource.determineCurrentLookupKey());
@@ -81,7 +80,6 @@ public class TbAccountServiceImpl implements TbAccountService {
         System.out.println("bindDataSource8:"+jdbcRoutingDataSource.determineCurrentLookupKey());
         System.out.println("bindDataSource8:"+jdbcRoutingDataSource.determineCurrentLookupKey());
         //sql级别的数据源绑定执行过sql后，数据源回归到方法级别
-        tbAccountDao.bindKey("master");
         System.out.println("bindDataSource8:"+jdbcRoutingDataSource.determineCurrentLookupKey());
         System.out.println("bindDataSource8:"+jdbcRoutingDataSource.determineCurrentLookupKey());
 
@@ -97,9 +95,7 @@ public class TbAccountServiceImpl implements TbAccountService {
     @BindPoint(group = "slaveGroup", loadBalance = LeastActiveLoadBalance.class)
     public void bindDataSource10() throws Exception {
         System.out.println("bindDataSource10:"+jdbcRoutingDataSource.determineCurrentLookupKey());
-        tbAccountDao.bindKey("master");
         System.out.println("bindDataSource10:"+jdbcRoutingDataSource.determineCurrentLookupKey());
-        tbAccountDao.bindGroup("slaveGroup",LeastActiveLoadBalance.class);
         System.out.println("bindDataSource10:"+jdbcRoutingDataSource.determineCurrentLookupKey());
     }
 }

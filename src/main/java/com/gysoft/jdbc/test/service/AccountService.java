@@ -29,7 +29,6 @@ public class AccountService {
             System.out.println("common query2" + tbAccountDao.queryAll());
         });
         System.out.println("common query3" + tbAccountDao.queryAll());
-        System.out.println("common query4" + tbAccountDao.bindKey("master").queryAll());
     }
 
     @BindPoint(group = "slaveGroup",loadBalance = LeastActiveLoadBalance.class)
