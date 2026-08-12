@@ -196,10 +196,6 @@
         <property name="tbAccountDao" ref="tbAccountDao"/>
     </bean>
 
-    <bean id="SpringJdbc" class="com.gysoft.jdbc.dao.SpringJdbc">
-        <property name="jdbcTemplate" ref="jdbcTemplate"/>
-    </bean>
-
     <bean id="tbUserDao" class="com.gysoft.jdbc.test.dao.TbUserDaoImpl">
     </bean>
 
