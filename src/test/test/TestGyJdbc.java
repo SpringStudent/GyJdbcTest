@@ -489,6 +489,11 @@ public class TestGyJdbc {
         }
         tbAccountDao.saveAll(result);
         System.out.println(result);
+        TbAccount tbAccount = new TbAccount();
+        tbAccount.setRealName("mymymy");
+        tbAccount.setUserName("mememme");
+        tbAccountDao.save(tbAccount);
+        System.out.println(tbAccount);
     }
 
     @Test
