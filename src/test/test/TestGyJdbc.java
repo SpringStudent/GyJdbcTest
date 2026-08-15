@@ -272,7 +272,7 @@ public class TestGyJdbc {
         System.out.println("queryIntegerWithSql:" + count);
         System.out.println("queryWithSql:" + count2);
         //SELECT age, COUNT(age) AS num FROM tb_user GROUP BY age ORDER BY age DESC
-        SQL sql4 = new SQL().select("age", countAs("age").as("num")).from(TbUser.class).orderBy(new Sort(TbUser::getAge)).groupBy(TbUser::getAge);
+        SQL sql4 = new SQL().select("age", count("age").as("num")).from(TbUser.class).orderBy(new Sort(TbUser::getAge)).groupBy(TbUser::getAge);
         Map<Integer, Integer> map = tbUserDao.queryMapWithSql(sql4, ResultSetExractorFactory.createDoubleColumnValueResultSetExtractor(Integer.class,Integer.class));
         System.out.println("queryMapWithSql:" + map);
         //SELECT DISTINCT(career) FROM tb_user
@@ -287,8 +287,8 @@ public class TestGyJdbc {
         System.out.println("queryWithSql:" + userRoles);
         //以下SQL仅仅用来演示SQL功能
         //SELECT roleId FROM( (SELECT DISTINCT(t.roleId) AS roleId FROM tb_user t) UNION ALL (SELECT DISTINCT(t1.roleId) AS roleId FROM tb_user t1))  t2
-        SQL sql7 = new SQL().select("roleId").from(new SQL().select(distinctAs("t.roleId").as("roleId")).from(TbUser.class).as("t").union()
-                .select(distinctAs("t1.roleId").as("roleId")).from(TbUser.class).as("t1")).as("t2");
+        SQL sql7 = new SQL().select("roleId").from(new SQL().select(distinct("t.roleId").as("roleId")).from(TbUser.class).as("t").union()
+                .select(distinct("t1.roleId").as("roleId")).from(TbUser.class).as("t1")).as("t2");
         List<Integer> inUseRoleId = tbUserDao.queryWithSql(Integer.class, sql7).queryForList();
         System.out.println("queryWithSql:" + inUseRoleId);
         //(SELECT t1.name,t1.realName,t2.id,t2.roleName FROM tb_user t1 LEFT JOIN tb_role t2  ON t1.roleId = t2.id  WHERE t1.age > 24)
@@ -488,6 +488,7 @@ public class TestGyJdbc {
             result.add(tbAccount);
         }
         tbAccountDao.saveAll(result);
+        System.out.println(result);
     }
 
     @Test
